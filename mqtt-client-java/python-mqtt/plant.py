@@ -9,10 +9,10 @@ def on_publish(client, userdata, mid):
     print("Publish returned result: {} {} {}".format(client, userdata, mid))
 
 # Software SPI configuration:
-CLK  = 18
-MISO = 23
-MOSI = 24
-CS   = 25
+CLK  = 25
+MISO = 24
+MOSI = 23
+CS   = 18
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 
