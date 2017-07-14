@@ -1,9 +1,9 @@
 package com.gepardec.hogarama.pi4j.mqtt;
 
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttTopic;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -28,9 +28,9 @@ public class MqttClientFactory {
 	private MqttClient client;
 	private MqttConnectOptions connOpt;
 
-	private static final String BROKER_URL = "tcp://localhost:1883";
 	private static final String OPENSHIFT_HOST = "broker-amq-mqtt-ssl-57-hogarama.cloud.itandtel.at";
-	private static final String BROKER_URL_SSL = "ssl://"+OPENSHIFT_HOST+":443";
+	private static final String BROKER_URL = "tcp://" + OPENSHIFT_HOST + ":1883";
+	private static final String BROKER_URL_SSL = "ssl://" + OPENSHIFT_HOST + ":443";
 
 	private static final String CLIENT_TRUSTSTORE_PATH = "META-INF/client.ts";
 	private static final String CLIENT_TRUSTSTORE_PASSWD = "L(o?cqGPtJ}7YiHu";
@@ -52,7 +52,7 @@ public class MqttClientFactory {
 			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			InputStream schemaIS = this.getClass().getClassLoader().getResourceAsStream(CLIENT_TRUSTSTORE_PATH);
 			trustStore.load(schemaIS, CLIENT_TRUSTSTORE_PASSWD.toCharArray());
-			
+
 			trustManagerFactory.init(trustStore);
 		} catch (KeyStoreException e) {
 			// TODO Auto-generated catch block
@@ -69,7 +69,7 @@ public class MqttClientFactory {
 		}
 		
 		sc.init(null, trustManagerFactory.getTrustManagers(), new java.security.SecureRandom());
-		
+
 		URL url = null;
 		try {
 			url = new URL("https://"+OPENSHIFT_HOST);
@@ -92,7 +92,7 @@ public class MqttClientFactory {
 		return new MqttClient(BROKER_URL_SSL, clientID);
 	}
 
-	public MqttClient getClient() {
+	public MqttClient getClient(MqttCallback callback) {
 		String clientID = MqttClient.generateClientId();
 		connOpt = new MqttConnectOptions();
 
@@ -107,7 +107,7 @@ public class MqttClientFactory {
 			} else {
 				client = new MqttClient(BROKER_URL, clientID);
 			}
-			client.setCallback(new PiMqttCallback());
+			client.setCallback(callback);
 			client.connect(connOpt);
 		} catch (MqttException e) {
 			e.printStackTrace();
