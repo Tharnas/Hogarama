@@ -16,6 +16,7 @@
 
     <version.maven-jar-plugin>3.0.0</version.maven-jar-plugin>
     <version.maven-dependency-plugin>3.0.0</version.maven-dependency-plugin>
+    <version.exec-maven-plugin>1.6.0</version.exec-maven-plugin>
   </properties>
 
   <modules>
