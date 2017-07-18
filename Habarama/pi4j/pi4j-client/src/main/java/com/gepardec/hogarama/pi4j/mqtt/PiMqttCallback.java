@@ -11,6 +11,7 @@ public class PiMqttCallback implements MqttCallback {
 
   public void connectionLost(Throwable t) {
     System.out.println("Connection lost!");
+    t.printStackTrace();
     // TODO: reconnect
   }
 

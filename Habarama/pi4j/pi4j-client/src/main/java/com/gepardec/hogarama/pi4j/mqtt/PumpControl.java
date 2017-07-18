@@ -7,22 +7,20 @@ import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 
 public class PumpControl {
-	private final GpioController gpio = GpioFactory.getInstance();
-	private	final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "MyLED", PinState.LOW);
-	{
+	static final GpioController gpio = GpioFactory.getInstance();
+	static final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "Pump Control", PinState.LOW);
+	static {
 		pin.setShutdownOptions(true, PinState.LOW);
 	}
 
-	public void pumpForDuration(int pumpDuration) {
+	public void pumpForDuration(int pumpDuration) throws InterruptedException {
 		pin.high();
-		System.out.println("pump activated");
+		System.out.println("--> GPIO state should be: ON");
 
-		try {
-			Thread.sleep(pumpDuration);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		Thread.sleep(pumpDuration);
+
 		pin.low();
-		System.out.println("pump deactivated");
+		System.out.println("--> GPIO state should be: OFF");
+
 	}
 }

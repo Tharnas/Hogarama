@@ -35,7 +35,7 @@ public class MqttClientFactory {
 	private static final String CLIENT_TRUSTSTORE_PATH = "META-INF/client.ts";
 	private static final String CLIENT_TRUSTSTORE_PASSWD = "L(o?cqGPtJ}7YiHu";
 
-	public static final String AMQ_TOPIC = "habarama";
+	public static final String AMQ_TOPIC = "pump_control";
 
 	private static final String AMQ_USERNAME = "mq_habarama";
 	private static final String AMQ_PASSWORD_MD5 = "mq_habarama_pass";
