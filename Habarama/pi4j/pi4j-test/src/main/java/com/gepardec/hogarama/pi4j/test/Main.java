@@ -11,7 +11,7 @@ public class Main {
 
 	public static void main(String args[]) {
 
-		sendMessage("3000");
+		sendMessage(args[0]);
 
 		try {
 			client.disconnect();
@@ -27,7 +27,7 @@ public class Main {
 		message.setQos(pubQoS);
 		message.setRetained(false);
 
-		System.out.println("Publishing to topic \"" + topic + "\" qos " + pubQoS);
+		System.out.println("Publishing to topic \"" + topic + ": " + pumpDuration);
 		MqttDeliveryToken token;
 		try {
 			token = topic.publish(message);

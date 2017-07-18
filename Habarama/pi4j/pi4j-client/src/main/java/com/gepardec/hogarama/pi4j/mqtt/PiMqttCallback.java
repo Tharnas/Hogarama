@@ -18,13 +18,11 @@ public class PiMqttCallback implements MqttCallback {
   public void deliveryComplete(IMqttDeliveryToken token) { }
 
   public void messageArrived(String topic, MqttMessage message) throws Exception {
-    System.out.println(message.toString());
+    System.out.println("Message received on " + topic + ": " + message.toString());
     if (topic.equals(Main.topic.getName())) {
       int pumpDuration = Integer.parseInt(new String(message.getPayload()).trim());
 
-      System.out.println("Start pumping.");
       pump.pumpForDuration(pumpDuration);
-      System.out.println("Pump stopped.");
     }
   }
 

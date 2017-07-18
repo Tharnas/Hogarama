@@ -15,12 +15,12 @@ public class PumpControl {
 
 	public void pumpForDuration(int pumpDuration) throws InterruptedException {
 		pin.high();
-		System.out.println("--> GPIO state should be: ON");
+		System.out.println("Start pumping.");
 
 		Thread.sleep(pumpDuration);
 
 		pin.low();
-		System.out.println("--> GPIO state should be: OFF");
+		System.out.println("Stop pumping.");
 
 	}
 }
