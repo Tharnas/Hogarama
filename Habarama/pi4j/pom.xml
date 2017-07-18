@@ -5,10 +5,17 @@
   <artifactId>pi4j</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>Pi4J for Hogarama</name>
-  <description>Testing Pi4J on Raspberry Pi 3B</description>
+  <description>Pump control on Raspberry Pi 3B</description>
   <packaging>pom</packaging>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <version.pi4j>1.2-SNAPSHOT</version.pi4j>
+    <version.paho.mqttv>1.1.0</version.paho.mqttv>
+
+    <version.maven-jar-plugin>3.0.0</version.maven-jar-plugin>
+    <version.maven-dependency-plugin>3.0.0</version.maven-dependency-plugin>
   </properties>
 
   <modules>
@@ -34,19 +41,25 @@
     <dependency>
         <groupId>com.pi4j</groupId>
         <artifactId>pi4j-gpio-extension</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>${version.pi4j}</version>
     </dependency>
     <dependency>
       <groupId>com.pi4j</groupId>
       <artifactId>pi4j-core</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>${version.pi4j}</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3 -->
     <dependency>
       <groupId>org.eclipse.paho</groupId>
       <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-      <version>1.1.0</version>
+      <version>${version.paho.mqttv}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.gepardec.hogarama</groupId>
+      <artifactId>pi4j-client</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
  </dependencyManagement>

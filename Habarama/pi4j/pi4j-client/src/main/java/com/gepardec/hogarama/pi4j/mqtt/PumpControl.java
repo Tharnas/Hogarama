@@ -9,9 +9,9 @@ import com.pi4j.io.gpio.RaspiPin;
 public class PumpControl {
 	private final GpioController gpio = GpioFactory.getInstance();
 	private	final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "MyLED", PinState.LOW);
-//	{
-//		pin.setShutdownOptions(true, PinState.LOW);
-//	}
+	{
+		pin.setShutdownOptions(true, PinState.LOW);
+	}
 
 	public void pumpForDuration(int pumpDuration) {
 		pin.high();

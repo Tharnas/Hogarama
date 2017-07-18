@@ -15,7 +15,6 @@
     <dependency>
       <groupId>com.gepardec.hogarama</groupId>
       <artifactId>pi4j-client</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

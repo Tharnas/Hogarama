@@ -11,7 +11,7 @@ public class Main {
 
 	public static void main(String args[]) {
 
-		sendMessage(Integer.toString(1000));
+		sendMessage("3000");
 
 		try {
 			client.disconnect();
