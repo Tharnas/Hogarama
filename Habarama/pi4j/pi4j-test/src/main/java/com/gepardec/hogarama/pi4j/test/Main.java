@@ -28,12 +28,11 @@ public class Main {
 		message.setRetained(false);
 
 		System.out.println("Publishing to topic \"" + topic + ": " + pumpDuration);
-		MqttDeliveryToken token;
 		try {
-			token = topic.publish(message);
+			MqttDeliveryToken token = topic.publish(message);
 			token.waitForCompletion();
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Failed to send the message to server.");
 		}
 	}
 

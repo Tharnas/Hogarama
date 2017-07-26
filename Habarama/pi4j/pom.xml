@@ -11,9 +11,13 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <!-- Dependencies -->
     <version.pi4j>1.2-SNAPSHOT</version.pi4j>
     <version.paho.mqttv>1.1.0</version.paho.mqttv>
+    <version.commons-logging>1.2</version.commons-logging>
+    <version.log4j>2.8.2</version.log4j>
 
+    <!-- Plugins -->
     <version.maven-jar-plugin>3.0.0</version.maven-jar-plugin>
     <version.maven-dependency-plugin>3.0.0</version.maven-dependency-plugin>
     <version.exec-maven-plugin>1.6.0</version.exec-maven-plugin>
@@ -61,6 +65,12 @@
       <groupId>com.gepardec.hogarama</groupId>
       <artifactId>pi4j-client</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${version.log4j}</version>
     </dependency>
   </dependencies>
  </dependencyManagement>

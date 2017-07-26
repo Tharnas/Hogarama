@@ -1,5 +1,7 @@
 package com.gepardec.hogarama.pi4j.mqtt;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -41,6 +43,8 @@ public class MqttClientFactory {
 	private static final String AMQ_PASSWORD_MD5 = "mq_habarama_pass";
 
 	private static final Boolean sslEnabled = true;
+
+	private static Logger logger = LogManager.getLogger(MqttClientFactory.class);
 
 	private MqttClient getClientSSLwithSNI(String clientID) throws MqttException, NoSuchAlgorithmException, KeyManagementException{
 
@@ -123,9 +127,9 @@ public class MqttClientFactory {
 		}
 		
 		if(sslEnabled){
-			System.out.println("Connected to " + BROKER_URL_SSL);
+			logger.info("Connected to " + BROKER_URL_SSL);
 		} else {
-			System.out.println("Connected to " + BROKER_URL);
+			logger.info("Connected to " + BROKER_URL);
 		}
 		
 
