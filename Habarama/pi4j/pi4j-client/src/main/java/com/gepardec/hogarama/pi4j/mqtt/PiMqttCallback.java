@@ -1,12 +1,15 @@
 package com.gepardec.hogarama.pi4j.mqtt;
 
 import com.gepardec.hogarama.pi4j.Main;
+import com.gepardec.hogarama.pi4j.PumpControl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import static com.gepardec.hogarama.pi4j.Main.PUMP_TOPIC;
 
 
 public class PiMqttCallback implements MqttCallback {
@@ -24,11 +27,15 @@ public class PiMqttCallback implements MqttCallback {
     }
   }
 
-  public void deliveryComplete(IMqttDeliveryToken token) { }
+  public void deliveryComplete(IMqttDeliveryToken token) {     try {
+    logger.debug(new String(token.getMessage().getPayload()) + " delivered");
+  } catch (MqttException e) {
+    logger.error("Delivery failed");
+  }}
 
   public void messageArrived(String topic, MqttMessage message) throws Exception {
     logger.debug("Message received on " + topic + ": " + message.toString());
-    if (topic.equals(Main.topic.getName())) {
+    if (topic.equals(PUMP_TOPIC)) {
       try {
         int pumpDuration = Integer.parseInt(new String(message.getPayload()).trim());
         pump.pumpForDuration(pumpDuration);

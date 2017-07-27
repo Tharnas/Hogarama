@@ -1,4 +1,4 @@
-package com.gepardec.hogarama.pi4j.mqtt;
+package com.gepardec.hogarama.pi4j;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;

@@ -15,7 +15,7 @@ Testing Pi4J on Raspberry Pi 3B for the [Hogaram Project](https://github.com/Gep
 
 ### Check the moisture sensor
 
-1. Run `java -cp hogarama-pi4j.jar com.gepardec.hogarama.pi4j.MoistureSensor`
+1. Run `java -cp hogarama-pi4j.jar com.gepardec.hogarama.pi4j.MCP3008Example`
 
 The first two columns are the digital (LOW is moist, HIGH is dry) and analog outputs.
 

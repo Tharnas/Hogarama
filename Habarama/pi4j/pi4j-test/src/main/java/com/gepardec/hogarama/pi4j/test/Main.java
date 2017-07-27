@@ -3,10 +3,12 @@ package com.gepardec.hogarama.pi4j.test;
 import com.gepardec.hogarama.pi4j.mqtt.MqttClientFactory;
 import org.eclipse.paho.client.mqttv3.*;
 
+import static com.gepardec.hogarama.pi4j.Main.PUMP_TOPIC;
+
 
 public class Main {
 	private static MqttClient client = new MqttClientFactory().getClient(new TestMqttCallback());
-	public static MqttTopic topic = client.getTopic(MqttClientFactory.AMQ_TOPIC);
+	public static MqttTopic topic = client.getTopic(PUMP_TOPIC);
 
 
 	public static void main(String args[]) {
