@@ -8,12 +8,10 @@ import Adafruit_MCP3008
 def on_publish(client, userdata, mid):
     print("Publish returned result: {} {} {}".format(client, userdata, mid))
 
-# Software SPI configuration:
-CLK  = 18
-MISO = 23
-MOSI = 24
-CS   = 25
-mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
+# Hardware SPI configuration:
+SPI_PORT   = 0
+SPI_DEVICE = 0
+mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
 
 
 # Setup pins
@@ -24,13 +22,13 @@ GPIO.setup(inPin, GPIO.OUT)
 
 # Setup measuring
 subjectName = "PflanzeWien"
-waitInterval = 60*30
-sampleInterval = 10
+waitInterval = 10
+sampleInterval = 1
 
 # Setup Hogarama connection
 client = paho.Client(clean_session=True)
 client.on_publish = on_publish
-ssl_ctx = ssl.create_default_context(cafile='/home/pi/SensorScripts/client.pem')
+ssl_ctx = ssl.create_default_context(cafile='./broker.pem')
 ssl_ctx.check_hostname = False
 client.tls_set_context(ssl_ctx)
 client.username_pw_set("mq_habarama", "mq_habarama_pass")
@@ -43,7 +41,7 @@ while True:
    time.sleep(sampleInterval)
    watterLevel = mcp.read_adc(sensorChannel)
    print watterLevel
-   payload = '{{"{}": {} }}'
+   payload = '{{"sensorName": {}, "type": "water", "value": {}, "location": "Wien", "version": 1 }}'
    payload = payload.format(subjectName,watterLevel)
    client.publish("habarama", payload=payload, qos=0, retain=False)
    GPIO.output(inPin, 0)

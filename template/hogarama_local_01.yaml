@@ -5,6 +5,88 @@ metadata:
   name: hogarama
 objects:
 - apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: fluentd
+    name: fluentd
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: fluentd:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: Fluentd
+      git:
+        uri: https://github.com/Gepardec/Hogarama/
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: debian:stretch-slim
+      type: Docker
+    triggers:
+    - github:
+        secret: 4m9EY9lErQRrs8LJjudP
+      type: GitHub
+    - generic:
+        secret: A2YAGDWxu2zgCfjIyo25
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: hogajama
+    name: hogajama
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: hogajama:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: Hogajama
+      git:
+        ref: master
+        uri: https://github.com/Gepardec/Hogarama.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: jboss-eap70-openshift:1.4
+      type: Source
+    triggers:
+    - github:
+        secret: 6dd31c017aceb946
+      type: GitHub
+    - generic:
+        secret: a1b587899e786b0a
+      type: Generic
+    - type: ConfigChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
   kind: Service
   metadata:
     annotations:
@@ -305,7 +387,7 @@ objects:
           - name: AMQ_USER
             value: mq_habarama
           - name: AMQ_PASSWORD
-            value: ${MQ_HABARAMA_PASS} 
+            value: mq_habarama_pass
           - name: AMQ_TRANSPORTS
             value: mqtt
           - name: AMQ_QUEUES
@@ -335,7 +417,7 @@ objects:
             value: L(o?cqGPtJ}7YiHu
           - name: AMQ_STORAGE_USAGE_LIMIT
             value: 1 gb
-          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:acadeae82790e144cc8631db9a78344cad2b359bc46d463a556c77caf08b11be
+          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:cb16f56a2b4f3a65bd640e3033d342d0a63e785a779ed2b609d5ffa8ce39cc2b
           imagePullPolicy: Always
           name: broker-amq
           ports:
@@ -405,7 +487,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: jboss-amq-62:1.3
-          namespace: openshift
       type: ImageChange
     - type: ConfigChange
   status:
@@ -451,7 +532,7 @@ objects:
           deploymentconfig: fluentd
       spec:
         containers:
-        - image: 172.30.194.147:5000/57-hogarama/fluentd@sha256:abd0c95a794ce94217998c3e8efadf2417d423fa673925c93fa499c9c53814a8
+        - image: hogarama/fluentd
           imagePullPolicy: Always
           name: fluentd
           ports:
@@ -481,7 +562,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: fluentd:latest
-          namespace: 57-hogarama
       type: ImageChange
   status:
     availableReplicas: 0
@@ -522,10 +602,7 @@ objects:
           deploymentconfig: hogajama
       spec:
         containers:
-        - env:
-          - name: STAGE
-            value: ${STAGE}
-          image: 172.30.194.147:5000/57-hogarama/hogajama@sha256:81d82a80b15b771e18a182d9b452499236d099a9c873953fd29f2c606d7903f5
+        - image: hogarama/hogajama
           imagePullPolicy: Always
           name: hogajama
           ports:
@@ -550,7 +627,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: hogajama:latest
-          namespace: 57-hogarama
       type: ImageChange
     - type: ConfigChange
   status:
@@ -590,12 +666,12 @@ objects:
           - name: MONGODB_USER
             value: hogajama
           - name: MONGODB_PASSWORD
-            value: ${MONGODB_PASSWORD} 
+            value: hogajama@mongodb
           - name: MONGODB_DATABASE
             value: hogajamadb
           - name: MONGODB_ADMIN_PASSWORD
-            value: ${MONGODB_ADMIN_PASSWORD}
-          image: registry.access.redhat.com/rhscl/mongodb-32-rhel7@sha256:4143584de718ef477fe03e3ae15985c68e0ce9dca8ba089dfa5927e800e59e69
+            value: admin@mongodb
+          image: registry.access.redhat.com/rhscl/mongodb-32-rhel7@sha256:8106b426b3f6c1beb215b3f4182eb27bc40543e4e0447f59ecd9eed8ae3750b8
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3
@@ -711,20 +787,228 @@ objects:
     creationTimestamp: null
     name: amq-app-secret
   type: Opaque
-parameters:
-    - description: Stage of this project
-      from: '[A-Z0-9]{8}'
-      value: test
-      name: STAGE
-    - description: Password used for MQ authentication
-      from: '[A-Z0-9]{8}'
-      generate: expression
-      name: MQ_HABARAMA_PASS
-    - description: Password used for MongoDB User authentication
-      from: '[A-Z0-9]{8}'
-      generate: expression
-      name: MONGODB_PASSWORD
-    - description: Password used for MongoDB Admin authentication
-      from: '[A-Z0-9]{8}'
-      generate: expression
-      name: MONGODB_ADMIN_PASSWORD
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: amq62-persistent-ssl
+      application: broker
+      template: amq62-persistent-ssl
+      xpaas: 1.3.1
+    name: broker-amq-mqtt-ssl
+  spec:
+    tls:
+      termination: passthrough
+    to:
+      kind: Service
+      name: broker-amq-mqtt-ssl
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2017-02-17T11:33:49Z
+        status: "True"
+        type: Admitted
+      routerName: prod-router
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-20T16:55:50Z
+        status: "True"
+        type: Admitted
+      routerName: markusrouter
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-21T12:02:36Z
+        status: "True"
+        type: Admitted
+      routerName: markusrouterpoi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-24T08:11:32Z
+        status: "True"
+        type: Admitted
+      routerName: router
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-24T08:19:08Z
+        status: "True"
+        type: Admitted
+      routerName: router-poi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-25T09:55:14Z
+        status: "True"
+        type: Admitted
+      routerName: ha-router-poi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-25T10:21:11Z
+        status: "True"
+        type: Admitted
+      routerName: ha-router-poi1
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-05-02T14:32:06Z
+        status: "True"
+        type: Admitted
+      routerName: router-poi-4
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: hogajama
+    name: hogajama
+  spec:
+    port:
+      targetPort: 8080-tcp
+    tls:
+      termination: edge
+    to:
+      kind: Service
+      name: hogajama
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2017-02-10T11:40:23Z
+        status: "True"
+        type: Admitted
+      host: hogajama-57-hogarama.cloud.itandtel.at
+      routerName: prod-router
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-20T16:55:51Z
+        status: "True"
+        type: Admitted
+      host: hogajama-57-hogarama.cloud.itandtel.at
+      routerName: markusrouter
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-21T12:02:36Z
+        status: "True"
+        type: Admitted
+      host: hogajama-57-hogarama.cloud.itandtel.at
+      routerName: markusrouterpoi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-24T08:11:30Z
+        status: "True"
+        type: Admitted
+      host: hogajama-57-hogarama.cloud.itandtel.at
+      routerName: router
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-24T08:19:06Z
+        status: "True"
+        type: Admitted
+      host: hogajama-57-hogarama.cloud.itandtel.at
+      routerName: router-poi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-25T09:55:12Z
+        status: "True"
+        type: Admitted
+      host: hogajama-57-hogarama.cloud.itandtel.at
+      routerName: ha-router-poi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-25T10:21:09Z
+        status: "True"
+        type: Admitted
+      host: hogajama-57-hogarama.cloud.itandtel.at
+      routerName: ha-router-poi1
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-05-02T14:32:04Z
+        status: "True"
+        type: Admitted
+      host: hogajama-57-hogarama.cloud.itandtel.at
+      routerName: router-poi-4
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: hogajama
+    name: hogajama-ssl
+  spec:
+    port:
+      targetPort: 8443-tcp
+    tls:
+      termination: passthrough
+    to:
+      kind: Service
+      name: hogajama
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2017-02-14T09:21:06Z
+        status: "True"
+        type: Admitted
+      host: hogajama-ssl-57-hogarama.cloud.itandtel.at
+      routerName: prod-router
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-20T16:55:51Z
+        status: "True"
+        type: Admitted
+      host: hogajama-ssl-57-hogarama.cloud.itandtel.at
+      routerName: markusrouter
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-21T12:02:36Z
+        status: "True"
+        type: Admitted
+      host: hogajama-ssl-57-hogarama.cloud.itandtel.at
+      routerName: markusrouterpoi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-24T08:11:32Z
+        status: "True"
+        type: Admitted
+      host: hogajama-ssl-57-hogarama.cloud.itandtel.at
+      routerName: router
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-24T08:19:07Z
+        status: "True"
+        type: Admitted
+      host: hogajama-ssl-57-hogarama.cloud.itandtel.at
+      routerName: router-poi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-25T09:55:13Z
+        status: "True"
+        type: Admitted
+      host: hogajama-ssl-57-hogarama.cloud.itandtel.at
+      routerName: ha-router-poi
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-04-25T10:21:10Z
+        status: "True"
+        type: Admitted
+      host: hogajama-ssl-57-hogarama.cloud.itandtel.at
+      routerName: ha-router-poi1
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2017-05-02T14:32:05Z
+        status: "True"
+        type: Admitted
+      host: hogajama-ssl-57-hogarama.cloud.itandtel.at
+      routerName: router-poi-4
+      wildcardPolicy: None
