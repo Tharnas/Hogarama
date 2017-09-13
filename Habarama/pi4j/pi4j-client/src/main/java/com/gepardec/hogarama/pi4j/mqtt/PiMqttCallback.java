@@ -20,7 +20,7 @@ public class PiMqttCallback implements MqttCallback {
     logger.error("Connection lost!");
     try {
       logger.info("Attempt to reconnect to server...");
-      Main.client.reconnect();
+      Main.CLIENT.reconnect();
       logger.info("Reconnection successful.");
     } catch (MqttException e) {
       logger.error("Reconnection failed.");

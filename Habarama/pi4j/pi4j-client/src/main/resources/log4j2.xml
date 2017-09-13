@@ -13,6 +13,10 @@
   </Appenders>
 
   <Loggers>
+    <Logger name="com.gepardec.hogarama.pi4j.mqtt.PiMqttCallback" level="debug">
+      <AppenderRef ref="file"></AppenderRef>
+    </Logger>
+
     <Root level="debug">
       <AppenderRef ref="console" />
       <AppenderRef ref="file"/>

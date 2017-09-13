@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 public class PumpControl {
 	private static Logger logger = LogManager.getLogger(PumpControl.class);
+
 	private static final GpioController gpio = GpioFactory.getInstance();
 	private static final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "Pump Control", PinState.LOW);
 	static {
@@ -18,12 +19,12 @@ public class PumpControl {
 	}
 
 	public void pumpForDuration(int pumpDuration) throws InterruptedException {
+		logger.info("Start pumping for " + pumpDuration + " milliseconds.");
 		pin.high();
-		logger.debug("Start pumping.");
 
 		Thread.sleep(pumpDuration);
 
+		logger.info("Stop pumping.");
 		pin.low();
-		logger.debug("Stop pumping.");
 	}
 }

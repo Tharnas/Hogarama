@@ -6,22 +6,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.*;
 
-import java.io.IOException;
-
 
 public class Main {
 	public static final String PUMP_TOPIC = "pump_control";
 	public static final String SENSOR_TOPIC = "habarama";
 
-	public static MqttClient client = new MqttClientFactory().getClient(new PiMqttCallback());
-	public static MqttTopic sensor_topic = client.getTopic(SENSOR_TOPIC);
-	private static Logger logger = LogManager.getLogger(Main.class);
+	public final static MqttClient CLIENT = new MqttClientFactory().getClient(new PiMqttCallback());
+	public static MqttTopic sensor_topic = CLIENT.getTopic(SENSOR_TOPIC);
+	private final static Logger LOGGER = LogManager.getLogger(Main.class);
 
 	public static void main(String args[]) {
-		logger.info("System started ...");
+		LOGGER.info("System started ...");
 
 		try {
-			client.subscribe(PUMP_TOPIC);
+			CLIENT.subscribe(PUMP_TOPIC);
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -32,9 +30,9 @@ public class Main {
 			sendMoisture(sensor.readData());
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(60000);
 			} catch (InterruptedException e) {
-				logger.error("Threading problem");
+				LOGGER.error("Threading problem");
 				e.printStackTrace();
 			}
 		}
@@ -48,11 +46,11 @@ public class Main {
 		message.setQos(pubQoS);
 		message.setRetained(false);
 
-		logger.info("Publishing to habarama: " + payload);
+		LOGGER.debug("Publishing to habarama: " + payload);
 		try {
 			MqttDeliveryToken token = sensor_topic.publish(message);
 			token.waitForCompletion();
-		} catch (Exception e) {
+		} catch (MqttException e) {
 			System.out.println("Failed to send the message to server.");
 		}
 	}
