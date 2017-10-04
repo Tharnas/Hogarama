@@ -56,10 +56,6 @@
     path: "{{ dir_project_home }}/.bashrc"
     marker: "# {mark} OPENSHIFT PATH"
     backup: no
-    content: >
-      "
+    content: |
       export MINISHIFT_HOME={{ dir_minishift_home }}
-      export MINISHIFT_USERNAME={{ minishift_username }}
-      export MINISHIFT_PASSWORD={{ minishift_password }}
       export PATH=$PATH:{{ dir_bin_openshift }}
-      "

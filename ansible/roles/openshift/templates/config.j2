@@ -1,0 +1,26 @@
+{
+    "addons": {
+        "admin-user": {
+            "Name": "admin-user",
+            "Enabled": true,
+            "Priority": 0
+        },
+        "anyuid": {
+            "Name": "anyuid",
+            "Enabled": true,
+            "Priority": 0
+        },
+        "xpaas": {
+            "Name": "xpaas",
+            "Enabled": true,
+            "Priority": 0
+        }
+    },
+    "iso-url": "file://{{ dir_minishift_home }}/cache/iso/minishift-rhel7.iso",
+    "memory": "{{ vm_memory }}",
+    "disk-size": "{{ vm_disk_size }}",
+    "cpus": "{{ vm_cpus }}",
+    "vm-driver": "kvm",
+    "skip-registration": true,
+    "log_dir": "{{ vm_log_dir }}"
+}

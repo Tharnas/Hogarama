@@ -2,6 +2,7 @@
 dir_opt_openshift: "{{ dir_opt }}/openshift"
 dir_bin_openshift: "{{ dir_bin }}/openshift"
 dir_minishift_home: "{{ dir_project_home }}/.minishift"
+dir_minishift_home_config: "{{ dir_minishift_home }}/config"
 # app versions
 version_s2i: 1.1.7
 version_hash_s2i: 226afa1
@@ -33,3 +34,9 @@ openshift_dirs:
   - "{{ dir_opt_openshift }}"
   - "{{ dir_bin_openshift }}"
   - "{{ dir_minishift_home }}"
+  - "{{ dir_minishift_home_config }}"
+# vm options
+vm_disk_size: "2048"
+vm_memory: "2048"
+vm_cpus: 2
+vm_log_dir: "{{ dir_logs }}/minishift"

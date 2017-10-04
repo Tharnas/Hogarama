@@ -9,3 +9,11 @@
 - name: "output: '{{ dir_bin_openshift }}/minishift setup-cdk'"
   debug:
     msg: "{{ minishift_setup_cdk_result.stdout }}"
+
+- name: "Copy minishift config.json to '{{ dir_minishift_home_config }}'"
+  template:
+    src: "../templates/config.j2"
+    dest: "{{ dir_minishift_home_config }}/config.json"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0600
