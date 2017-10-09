@@ -127,11 +127,15 @@ objects:
                   value: "${JENKINS_SERVICE_NAME}"
                 - name: "JNLP_SERVICE_NAME"
                   value: "${JENKINS_SERVICE_NAME}-jnlp"
+                - name: "KUBERNETES_TRUST_CERTIFICATES"
+                  value: "true"
+                - name: "KUBERNETES_MASTER"
+                  value: "https://hogarama-jenkins-hogarama-buildserver.192.168.42.238.nip.io/"
               resources:
                 limits:
                   memory: "1024Mi"
               volumeMounts:
-                - name: "${JENKINS_SERVICE_NAME}-data"
+                - name: "${JENKINS_SERVICE_NAME}"
                   mountPath: "/var/lib/jenkins"
               terminationMessagePath: "/dev/termination.log"
               imagePullPolicy: "IfNotPresent"
@@ -140,7 +144,7 @@ objects:
                   capabilities:
                     privileged: false
           volumes:
-            - name: "${JENKINS_SERVICE_NAME}-data"
+            - name: "${JENKINS_SERVICE_NAME}"
               persistentVolumeClaim:
                 claimName: ${JENKINS_SERVICE_NAME}
           restartPolicy: "Always"
@@ -173,6 +177,22 @@ objects:
           protocol: "TCP"
           port: 80
           targetPort: 8080
+          nodePort: 0
+      selector:
+        name:  "${JENKINS_SERVICE_NAME}"
+      type: "ClusterIP"
+      sessionAffinity: "None"
+
+  - kind: "Service"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}-jnlp"
+    spec:
+      ports:
+        - name: "agent"
+          protocol: "TCP"
+          port: 50000
+          targetPort: 50000
           nodePort: 0
       selector:
         name:  "${JENKINS_SERVICE_NAME}"

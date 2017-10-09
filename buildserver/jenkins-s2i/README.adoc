@@ -1,3 +1,0 @@
-== Additional information
-See this repository for how to perform s2i build which configures the jenkins instance +
-https://github.com/openshift/jenkins
