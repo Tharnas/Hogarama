@@ -7,17 +7,49 @@ metadata:
     description: "Jenkins Service for building and testing the Hogarama project"
     iconClass: "icon-jenkins"
     tags: "instant-app,jenkins"
+
 parameters:
   - name: "JENKINS_SERVICE_NAME"
     displayName: "Jenkins service name"
     value: "hogarama-jenkins"
+
 objects:
+  - kind: "ServiceAccount"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}"
+      annotations:
+        serviceaccounts.openshift.io/oauth-redirectreference.jenkins: "{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"${JENKINS_SERVICE_NAME}\"}}"
+
+  - kind: "PersistentVolumeClaim"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}"
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: "1Gi"
+
+  - kind: "RoleBinding"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}_edit"
+    groupNames: null
+    subjects:
+      - name: "${JENKINS_SERVICE_NAME}"
+        kind: "ServiceAccount"
+    roleRef:
+      name: "edit"
+
   - kind: "ImageStream"
     apiVersion: "v1"
     metadata:
       name: "${JENKINS_SERVICE_NAME}"
       labels:
         application: "${JENKINS_SERVICE_NAME}"
+
   - kind: "BuildConfig"
     apiVersion: "v1"
     metadata:
@@ -42,3 +74,107 @@ objects:
         to:
           kind: "ImageStreamTag"
           name: "${JENKINS_SERVICE_NAME}:latest"
+      triggers:
+        - type: "ImageChange"
+          imageChange:
+
+  - kind: "DeploymentConfig"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}"
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+    spec:
+      strategy:
+        type: "Recreate"
+      replicas: "1"
+      selector:
+        name: "${JENKINS_SERVICE_NAME}"
+      triggers:
+        - type: "ImageChange"
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - "${JENKINS_SERVICE_NAME}"
+            from:
+              kind: "ImageStreamTag"
+              name: "${JENKINS_SERVICE_NAME}:latest"
+        - type: "ConfigChange"
+      template:
+        metadata:
+          labels:
+            name: "${JENKINS_SERVICE_NAME}"
+        spec:
+          serviceAccountName: "${JENKINS_SERVICE_NAME}"
+          containers:
+            - name: "${JENKINS_SERVICE_NAME}"
+              image: " "
+              readinessProbe:
+                timeoutSeconds: 10
+                initialDelaySeconds: 10
+                httpGet:
+                  path: "/login"
+                  port: 8080
+              livenessProbe:
+                timeoutSeconds: 10
+                initialDelaySeconds: 10
+                failureThreshold: 10
+                httpGet:
+                  path: "/login"
+                  port: 8080
+              env:
+                - name: "JENKINS_SERVICE_NAME"
+                  value: "${JENKINS_SERVICE_NAME}"
+                - name: "JNLP_SERVICE_NAME"
+                  value: "${JENKINS_SERVICE_NAME}-jnlp"
+              resources:
+                limits:
+                  memory: "1024Mi"
+              volumeMounts:
+                - name: "${JENKINS_SERVICE_NAME}-data"
+                  mountPath: "/var/lib/jenkins"
+              terminationMessagePath: "/dev/termination.log"
+              imagePullPolicy: "IfNotPresent"
+              capabilities:
+                securityContext:
+                  capabilities:
+                    privileged: false
+          volumes:
+            - name: "${JENKINS_SERVICE_NAME}-data"
+              persistentVolumeClaim:
+                claimName: ${JENKINS_SERVICE_NAME}
+          restartPolicy: "Always"
+          dnsPolicy: "ClusterFirst"
+
+  - kind: "Route"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}"
+      annotations:
+        template.openshift.io/expose-uri: "http://{.spec.host}{.spec.path}"
+    spec:
+      to:
+        kind: "Service"
+        name: "${JENKINS_SERVICE_NAME}"
+      tls:
+        termination: "edge"
+        insecureEdgeTerminationPolicy: "Redirect"
+
+  - kind: "Service"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}"
+      annotations:
+        service.alpha.openshift.io/dependencies: "[{\"name\": \"${JNLP_SERVICE_NAME}\", \"namespace\": \"\", \"kind\": \"Service\"}]"
+        service.openshift.io/infrastructure: "true"
+    spec:
+      ports:
+        - name: "web"
+          protocol: "TCP"
+          port: 80
+          targetPort: 8080
+          nodePort: 0
+      selector:
+        name:  "${JENKINS_SERVICE_NAME}"
+      type: "ClusterIP"
+      sessionAffinity: "None"
