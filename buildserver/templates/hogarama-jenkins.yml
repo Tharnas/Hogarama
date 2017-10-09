@@ -1,0 +1,44 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "hogarama-jenkins"
+  annotations:
+    openshift.io/display-name: "Jenkins (Hogarama)"
+    description: "Jenkins Service for building and testing the Hogarama project"
+    iconClass: "icon-jenkins"
+    tags: "instant-app,jenkins"
+parameters:
+  - name: "JENKINS_SERVICE_NAME"
+    displayName: "Jenkins service name"
+    value: "hogarama-jenkins"
+objects:
+  - kind: "ImageStream"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}"
+      labels:
+        application: "${JENKINS_SERVICE_NAME}"
+  - kind: "BuildConfig"
+    apiVersion: "v1"
+    metadata:
+      name: "${JENKINS_SERVICE_NAME}"
+      labels:
+        application: "${JENKINS_SERVICE_NAME}"
+    spec:
+      source:
+        type: "Git"
+        git:
+          uri: "https://github.com/Gepardec/Hogarama"
+          ref: "openshift_jenkins_build"
+        contextDir: "buildserver/jenkins-s2i"
+      strategy:
+        type: "Source"
+        sourceStrategy:
+          from:
+            kind: "ImageStreamTag"
+            namespace: "openshift"
+            name: "jenkins:latest"
+      output:
+        to:
+          kind: "ImageStreamTag"
+          name: "${JENKINS_SERVICE_NAME}:latest"

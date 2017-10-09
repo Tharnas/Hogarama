@@ -1,0 +1,354 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "hogarama-jenkins",
+    "annotations": {
+      "openshift.io/display-name": "Jenkins (Hogarama)",
+      "description": "Jenkins Service for building and testing the Hogarama project",
+      "iconClass": "icon-jenkins",
+      "tags": "instant-app,jenkins",
+      "template.openshift.io/provider-display-name": "Gepardec",
+      "template.openshift.io/documentation-url": "https://docs.openshift.org/latest/using_images/other_images/jenkins.html",
+      "template.openshift.io/support-url": "https://access.redhat.com"
+    }
+  },
+  "message": "A jenkins build service has been created in your project",
+  "parameters": [
+    {
+      "name": "JENKINS_SERVICE_NAME",
+      "displayName": "Jenkins Service Name",
+      "description": "The name of the OpenShift Service exposed for the Jenkins container.",
+      "value": "hogarama-jenkins"
+    },
+    {
+      "name": "JNLP_SERVICE_NAME",
+      "displayName": "Jenkins JNLP Service Name",
+      "description": "The name of the service used for master/slave communication.",
+      "value": "hogarama-jenkins-jnlp"
+    },
+    {
+      "name": "ENABLE_OAUTH",
+      "displayName": "Enable OAuth in Jenkins",
+      "description": "Whether to enable OAuth OpenShift integration. If false, the static account 'admin' will be initialized with the password 'password'.",
+      "value": "true"
+    },
+    {
+      "name": "JVM_ARCH",
+      "displayName": "Jenkins JVM Architecture",
+      "description": "Whether Jenkins runs with a 32 bit (i386) or 64 bit (x86_64) JVM.",
+      "value": "x86_64"
+    },
+    {
+      "name": "MEMORY_LIMIT",
+      "displayName": "Memory Limit",
+      "description": "Maximum amount of memory the container can use.",
+      "value": "1024Mi"
+    },
+    {
+      "name": "VOLUME_CAPACITY",
+      "displayName": "Volume Capacity",
+      "description": "Volume space available for data, e.g. 512Mi, 2Gi.",
+      "value": "1Gi",
+      "required": true
+    }
+  ],
+  "labels": {
+    "template": "hogarama-jenkins"
+  },
+  "objects": [
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${JENKINS_SERVICE_NAME}",
+        "annotations": {
+          "template.openshift.io/expose-uri": "http://{.spec.host}{.spec.path}"
+        }
+      },
+      "spec": {
+        "to": {
+          "kind": "Service",
+          "name": "${JENKINS_SERVICE_NAME}"
+        },
+        "tls": {
+          "termination": "edge",
+          "insecureEdgeTerminationPolicy": "Redirect"
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${JENKINS_SERVICE_NAME}"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${VOLUME_CAPACITY}"
+          }
+        }
+      }
+    },
+    {
+        "kind": "ImageStream",
+        "apiVersion": "v1",
+        "metadata": {
+            "name": "${JENKINS_SERVICE_NAME}",
+            "labels": {
+                "application": "${JENKINS_SERVICE_NAME}"
+            }
+        }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "BuildConfig",
+      "metadata": {
+        "name": "${JENKINS_SERVICE_NAME}"
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "https://github.com/Gepardec/Hogarama",
+            "ref" : "master"
+          },
+          "contextDir": "/buildserver/jenkins-s2i"
+        }
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "jenkins:latest",
+              "namespace": "openshift"
+            }
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "hogarama-jenkins:latest"
+          }
+        },
+        "triggers" : [
+          {
+              "type": "ImageChange",
+              "imageChange": {}
+          }
+        ]
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${JENKINS_SERVICE_NAME}",
+        "annotations": {
+          "template.alpha.openshift.io/wait-for-ready": "true"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "hogarama-jenkins"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "hogarama-jenkins:latest",
+                "namespace": "gepardec"
+              },
+              "lastTriggeredImage": ""
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${JENKINS_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "name": "${JENKINS_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "serviceAccountName": "${JENKINS_SERVICE_NAME}",
+            "containers": [
+              {
+                "name": "hogarama-jenkins",
+                "image": "hogarama-jenkins",
+                "readinessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 3,
+                  "httpGet": {
+                    "path": "/login",
+                    "port": 8080
+                  }
+                },
+                "livenessProbe": {
+                    "timeoutSeconds": 3,
+                    "initialDelaySeconds": 420,
+                    "failureThreshold" : 30,
+                    "httpGet": {
+                        "path": "/login",
+                        "port": 8080
+                    }
+                },
+                "env": [
+                  {
+                    "name": "OPENSHIFT_ENABLE_OAUTH",
+                    "value": "${ENABLE_OAUTH}"
+                  },
+                  {
+                    "name": "OPENSHIFT_ENABLE_REDIRECT_PROMPT",
+                    "value": "true"
+                  },
+                  {
+                    "name": "OPENSHIFT_JENKINS_JVM_ARCH",
+                    "value": "${JVM_ARCH}"
+                  },
+                  {
+                    "name": "KUBERNETES_MASTER",
+                    "value": "https://kubernetes.default:443"
+                  },
+                  {
+                    "name": "KUBERNETES_TRUST_CERTIFICATES",
+                    "value": "true"
+                  },
+                  {
+                    "name": "JENKINS_SERVICE_NAME",
+                    "value": "${JENKINS_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "JNLP_SERVICE_NAME",
+                    "value": "${JNLP_SERVICE_NAME}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "${JENKINS_SERVICE_NAME}-data",
+                    "mountPath": "/var/lib/jenkins"
+                  }
+                ],
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent",
+                "capabilities": {},
+                "securityContext": {
+                  "capabilities": {},
+                  "privileged": false
+                }
+              }
+            ],
+            "volumes": [
+              {
+                "name": "${JENKINS_SERVICE_NAME}-data",
+                "persistentVolumeClaim": {
+                  "claimName": "${JENKINS_SERVICE_NAME}"
+                }
+              }
+            ],
+            "restartPolicy": "Always",
+            "dnsPolicy": "ClusterFirst"
+          }
+        }
+      }
+    },
+    {
+      "kind": "ServiceAccount",
+        "apiVersion": "v1",
+        "metadata": {
+            "name": "${JENKINS_SERVICE_NAME}",
+            "annotations": {
+		"serviceaccounts.openshift.io/oauth-redirectreference.jenkins": "{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"${JENKINS_SERVICE_NAME}\"}}"
+            }
+        }
+    },
+    {
+      "kind": "RoleBinding",
+      "apiVersion": "v1",
+      "metadata": {
+          "name": "${JENKINS_SERVICE_NAME}_edit"
+      },
+      "groupNames": null,
+      "subjects": [
+          {
+              "kind": "ServiceAccount",
+              "name": "${JENKINS_SERVICE_NAME}"
+          }
+      ],
+      "roleRef": {
+          "name": "edit"
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${JNLP_SERVICE_NAME}"
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "agent",
+            "protocol": "TCP",
+            "port": 50000,
+            "targetPort": 50000,
+            "nodePort": 0
+          }
+        ],
+        "selector": {
+          "name": "${JENKINS_SERVICE_NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+       "kind": "Service",
+       "apiVersion": "v1",
+       "metadata": {
+         "name": "${JENKINS_SERVICE_NAME}",
+         "annotations": {
+           "service.alpha.openshift.io/dependencies": "[{\"name\": \"${JNLP_SERVICE_NAME}\", \"namespace\": \"\", \"kind\": \"Service\"}]",
+           "service.openshift.io/infrastructure": "true"
+         }
+       },
+       "spec": {
+         "ports": [
+           {
+             "name": "web",
+             "protocol": "TCP",
+             "port": 80,
+             "targetPort": 8080,
+             "nodePort": 0
+           }
+         ],
+         "selector": {
+           "name": "${JENKINS_SERVICE_NAME}"
+         },
+         "type": "ClusterIP",
+         "sessionAffinity": "None"
+       }
+    }
+  ]
+}
