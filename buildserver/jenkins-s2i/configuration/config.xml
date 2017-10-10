@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson>
+  <disabledAdministrativeMonitors/>
+  <version>2.46.3</version>
+  <numExecutors>5</numExecutors>
+  <mode>NORMAL</mode>
+  <useSecurity>true</useSecurity>
+  <authorizationStrategy class="hudson.security.GlobalMatrixAuthorizationStrategy">
+    <permission>hudson.model.Computer.Configure:admin</permission>
+    <permission>hudson.model.Computer.Delete:admin</permission>
+    <permission>hudson.model.Hudson.Administer:admin</permission>
+    <permission>hudson.model.Hudson.Read:admin</permission>
+    <permission>hudson.model.Item.Build:admin</permission>
+    <permission>hudson.model.Item.Configure:admin</permission>
+    <permission>hudson.model.Item.Create:admin</permission>
+    <permission>hudson.model.Item.Delete:admin</permission>
+    <permission>hudson.model.Item.Read:admin</permission>
+    <permission>hudson.model.Item.Workspace:admin</permission>
+    <permission>hudson.model.Run.Delete:admin</permission>
+    <permission>hudson.model.Run.Update:admin</permission>
+    <permission>hudson.model.View.Configure:admin</permission>
+    <permission>hudson.model.View.Create:admin</permission>
+    <permission>hudson.model.View.Delete:admin</permission>
+    <permission>hudson.scm.SCM.Tag:admin</permission>
+  </authorizationStrategy>
+  <securityRealm class="hudson.security.HudsonPrivateSecurityRealm">
+    <disableSignup>true</disableSignup>
+    <enableCaptcha>false</enableCaptcha>
+  </securityRealm>
+  <disableRememberMe>false</disableRememberMe>
+  <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
+  <workspaceDir>${ITEM_ROOTDIR}/workspace</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <jdks/>
+  <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+  <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
+  <clouds>
+    <org.csanchez.jenkins.plugins.kubernetes.KubernetesCloud plugin="kubernetes@0.11">
+      <name>openshift</name>
+      <defaultsProviderTemplate></defaultsProviderTemplate>
+      <templates>
+        <org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+          <inheritFrom></inheritFrom>
+          <name>maven</name>
+          <privileged>false</privileged>
+          <alwaysPullImage>false</alwaysPullImage>
+          <instanceCap>2147483647</instanceCap>
+          <idleMinutes>0</idleMinutes>
+          <label>maven</label>
+          <serviceAccount>hogarama-jenkins</serviceAccount>
+          <nodeSelector></nodeSelector>
+          <customWorkspaceVolumeEnabled>false</customWorkspaceVolumeEnabled>
+          <workspaceVolume class="org.csanchez.jenkins.plugins.kubernetes.volumes.workspace.EmptyDirWorkspaceVolume">
+            <memory>false</memory>
+          </workspaceVolume>
+          <volumes/>
+          <containers>
+            <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+              <name>jnlp</name>
+              <image>registry.hub.docker.com/gdhet/hogarama-jenkins-slave-maven-rhel7-docker</image>
+              <privileged>false</privileged>
+              <alwaysPullImage>false</alwaysPullImage>
+              <workingDir>/tmp</workingDir>
+              <command></command>
+              <args>${computer.jnlpmac} ${computer.name}</args>
+              <ttyEnabled>false</ttyEnabled>
+              <resourceRequestCpu></resourceRequestCpu>
+              <resourceRequestMemory></resourceRequestMemory>
+              <resourceLimitCpu></resourceLimitCpu>
+              <resourceLimitMemory></resourceLimitMemory>
+              <envVars/>
+            </org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+          </containers>
+          <envVars/>
+          <annotations/>
+          <imagePullSecrets/>
+        </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+        <org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+          <inheritFrom></inheritFrom>
+          <name>nodejs</name>
+          <privileged>false</privileged>
+          <alwaysPullImage>false</alwaysPullImage>
+          <instanceCap>2147483647</instanceCap>
+          <idleMinutes>0</idleMinutes>
+          <label>nodejs</label>
+          <serviceAccount>hogarama-jenkins</serviceAccount>
+          <nodeSelector></nodeSelector>
+          <customWorkspaceVolumeEnabled>false</customWorkspaceVolumeEnabled>
+          <workspaceVolume class="org.csanchez.jenkins.plugins.kubernetes.volumes.workspace.EmptyDirWorkspaceVolume">
+            <memory>false</memory>
+          </workspaceVolume>
+          <volumes/>
+          <containers>
+            <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+              <name>jnlp</name>
+              <image>registry.access.redhat.com/openshift3/jenkins-slave-nodejs-rhel7</image>
+              <privileged>false</privileged>
+              <alwaysPullImage>false</alwaysPullImage>
+              <workingDir>/tmp</workingDir>
+              <command></command>
+              <args>${computer.jnlpmac} ${computer.name}</args>
+              <ttyEnabled>false</ttyEnabled>
+              <resourceRequestCpu></resourceRequestCpu>
+              <resourceRequestMemory></resourceRequestMemory>
+              <resourceLimitCpu></resourceLimitCpu>
+              <resourceLimitMemory></resourceLimitMemory>
+              <envVars/>
+            </org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+          </containers>
+          <envVars/>
+          <annotations/>
+          <imagePullSecrets/>
+                </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+              </templates>
+              <serverUrl>https://172.30.0.1:443</serverUrl>
+              <serverCertificate>-----BEGIN CERTIFICATE-----
+        MIIC6jCCAdKgAwIBAgIBATANBgkqhkiG9w0BAQsFADAmMSQwIgYDVQQDDBtvcGVu
+        c2hpZnQtc2lnbmVyQDE1MDc2MTg3NTIwHhcNMTcxMDEwMDY1OTExWhcNMjIxMDA5
+        MDY1OTEyWjAmMSQwIgYDVQQDDBtvcGVuc2hpZnQtc2lnbmVyQDE1MDc2MTg3NTIw
+        ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC6mA5zaU05WLenYLCVp/1Q
+        NsZo3MICRly+8P/vU+VIMdvCm2k8MJKNndUZbhkTxzARK2erieT3qf4iQqTlFMa5
+        ljauI3KpwoB6aXeTA1zn1NqAUFC69YJm418Ghtg58mY0syE3RXhfmEOVvYg8tsBJ
+        qHkHRNI6YQd0TfmiJSEgPOhNJo98s/97yvapMdfbtp0U/6D8nTCJiut8KESLUfW8
+        QFv5FSShf+wE7VNnIsDvHB5E/4Cx8zgK4CE48oKGqAFNnlsneAw+igtJL0F1WUaE
+        RvNEV5rSMTvpyn5lhkcPK6BchOQ7zSstgcky/Afvo8WZ6ZxGKSkLXUdz8xm9DEvH
+        AgMBAAGjIzAhMA4GA1UdDwEB/wQEAwICpDAPBgNVHRMBAf8EBTADAQH/MA0GCSqG
+        SIb3DQEBCwUAA4IBAQCms+19kEiJ7BVqf2OxOUbu9tZjPv9mejJiqp8AYexPE2oM
+        qKCBYUtet0Ng2bQ/lruiBOszS9Z/DXQY4glLSrH8jB07jsZTQvFyvM30CiT/USYp
+        g/oLHUi0jm3LkPr8nkww8fqs+lYzF1R+NnkjV3U2NrLYpuKlS3b5UVdkr+CiZw84
+        DTq7DcC0mUuuptCy0r0txMdokXQ9h6X48q0+L20FLYi3wxEYHXXDs/p5XMq7IWfa
+        xClyK5r4BdKYFAEBOgqRHNuiIL1nwa1KcNmx7riTLXc+FCrMfDpg6DkTxTIZ5nfn
+        oRgBwexjZSJr6TOXS+WVKsV0uIC+vrSQkeVwHxuA
+        -----END CERTIFICATE-----</serverCertificate>
+              <skipTlsVerify>false</skipTlsVerify>
+              <namespace>hogarama-buildserver</namespace>
+              <jenkinsUrl>http://:</jenkinsUrl>
+              <jenkinsTunnel>172.30.172.190:50000</jenkinsTunnel>
+              <credentialsId>1a12dfa4-7fc5-47a7-aa17-cc56572a41c7</credentialsId>
+              <containerCap>10</containerCap>
+              <retentionTimeout>5</retentionTimeout>
+              <connectTimeout>0</connectTimeout>
+              <readTimeout>0</readTimeout>
+            </org.csanchez.jenkins.plugins.kubernetes.KubernetesCloud>
+          </clouds>
+          <quietPeriod>1</quietPeriod>
+          <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
+          <views>
+            <hudson.model.AllView>
+              <owner class="hudson" reference="../../.."/>
+              <name>all</name>
+              <filterExecutors>false</filterExecutors>
+              <filterQueue>false</filterQueue>
+              <properties/>
+            </hudson.model.AllView>
+          </views>
+          <primaryView>all</primaryView>
+          <slaveAgentPort>50000</slaveAgentPort>
+          <label>master</label>
+          <nodeProperties/>
+          <globalNodeProperties/>
+          <noUsageStatistics>true</noUsageStatistics>
+</hudson>
