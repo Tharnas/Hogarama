@@ -23,14 +23,14 @@
       </userRemoteConfigs>
       <branches>
         <hudson.plugins.git.BranchSpec>
-          <name></name>
+          <name>/</name>
         </hudson.plugins.git.BranchSpec>
       </branches>
       <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>Jenkinsfile</scriptPath>
+    <scriptPath>build/groovy/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

@@ -12,6 +12,27 @@ parameters:
   - name: "JENKINS_SERVICE_NAME"
     displayName: "Jenkins service name"
     value: "hogarama-jenkins"
+    required: true
+
+  - name: "GIT_REPO_URL"
+    displayName: "Hogarama git repository url (use https:// instead of git://)"
+    value: "https://github.com/Gepardec/Hogarama"
+    required: true
+
+  - name: "GIT_REPO_REF"
+    displayName: "Hogarama branch"
+    value: "openshift_jenkins_build"
+    required: true
+
+  - name: "KUBERNETES_MASTER"
+    displayName: "The url to the openshift instance. (E.g.: https://192.168.42.195:8443)"
+    value: "https://192.168.42.195:8443"
+    required: true
+
+  - name: "JENKINS_SLAVE_IMAGE_MAVEN"
+    displayName: "The docker tag for the maven slave image"
+    value: "registry.hub.docker.com/gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01"
+    required: true
 
 objects:
   - kind: "ServiceAccount"
@@ -60,8 +81,8 @@ objects:
       source:
         type: "Git"
         git:
-          uri: "https://github.com/Gepardec/Hogarama"
-          ref: "openshift_jenkins_build"
+          uri: "${GIT_REPO_URL}"
+          ref: "${GIT_REPO_REF}"
         contextDir: "buildserver/jenkins-s2i"
       strategy:
         type: "Source"
@@ -130,7 +151,13 @@ objects:
                 - name: "KUBERNETES_TRUST_CERTIFICATES"
                   value: "true"
                 - name: "KUBERNETES_MASTER"
-                  value: "https://hogarama-jenkins-hogarama-buildserver.192.168.42.238.nip.io/"
+                  value: "${KUBERNETES_MASTER}"
+                - name: "HOGARAMA_GIT_URL"
+                  value: "GIT_REPO_URL"
+                - name: "HOGARAMA_GIT_REF"
+                  value: "GIT_REPO_REF"
+                - name: "JENKINS_SLAVE_IMAGE_MAVEN"
+                  value: "${JENKINS_SLAVE_IMAGE_MAVEN}"
               resources:
                 limits:
                   memory: "1024Mi"
