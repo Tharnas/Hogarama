@@ -31,7 +31,7 @@ parameters:
 
   - name: "JENKINS_SLAVE_IMAGE_MAVEN"
     displayName: "The docker tag for the maven slave image"
-    value: "gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01"
+    value: "registry.hub.docker.com/gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01"
     required: true
 
 objects:
