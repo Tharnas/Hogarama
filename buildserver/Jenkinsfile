@@ -1,14 +1,13 @@
-def mavenLabel = 'hogarama-maven-slave'
 def mavenImage = '${env.JENKINS_SLAVE_IMAGE_MAVEN}'
 
-podTemplate(cloud: 'openshift', containers: [
-  containerTemplate(name: mavenLabel, image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01')],
+podTemplate(cloud: 'openshift', label: 'test_pod', containers: [
+  containerTemplate(name: 'maven_container', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01')],
   volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)]) {
 
-  node(mavenLabel) {
+  node('test_pod') {
     stage('build') {
       git '${env.HOGARAMA_GIT_URL}'
-      container(mavenLabel) {
+      container('maven_container') {
           sh 'mvn clean install'
       }
     }
