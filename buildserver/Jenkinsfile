@@ -1,7 +1,7 @@
 def mavenLabel = 'maven'
 def mavenImage = '${env.JENKINS_SLAVE_IMAGE_MAVEN}'
 
-podTemplate(label: mavenLabel, containers: [
+podTemplate(cloud: 'openshift', label: mavenLabel, containers: [
   containerTemplate(name: mavenLabel, image: mavenImage, ttyEnabled: true, command: 'cat')
   ], volumes: [
   persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)
