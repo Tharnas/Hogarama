@@ -18,6 +18,7 @@ function build(){
     --build-arg VERSION_MAVEN=${VERSION_MAVEN} \
     --tag ${MAVEN_TAG}:${TAG_VERSION_MAVEN} \
     --tag ${MAVEN_TAG_HUB}:${TAG_VERSION_MAVEN} \
+    --tag ${MAVEN_TAG_HUB}:latest  \
     slave-maven/
 }
 
@@ -28,6 +29,7 @@ function push(){
   # Push images to docker hub
   docker push ${ORACLE_TAG_HUB}:${TAG_VERSION_ORACLE}
   docker push ${MAVEN_TAG_HUB}:${TAG_VERSION_MAVEN}
+  docker push ${MAVEN_TAG_HUB}:latest
   # Logout of docker hub
   docker logout ${REGISTRY_HUB}
 }

@@ -1,4 +1,4 @@
-FROM openshift/base-centos7:latest
+FROM registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7
 
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
