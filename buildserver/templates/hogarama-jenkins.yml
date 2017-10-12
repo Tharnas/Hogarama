@@ -167,8 +167,6 @@ objects:
                   value: "true"
                 - name: "OPENSHIFT_ENABLE_REDIRECT_PROMPT"
                   value: "true"
-                - name: "JENKINS_URL"
-                  value: http://${JENKINS_SERVICE_NAME}:80
               resources:
                 limits:
                   memory: "1024Mi"
