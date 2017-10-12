@@ -1,14 +1,14 @@
-podTemplate(name: 'mavenPod', label: 'mavenPod', namepsace: 'hogarama-buildserver', cloud: 'openshift', containers: [
-  containerTemplate(name: 'maven',
+podTemplate(name: 'maven', label: 'mavenPod', namepsace: 'hogarama-buildserver', cloud: 'openshift', containers: [
+  containerTemplate(name: 'jnlp',
                     ttyEnabled: true,
                     command: 'cat',
                     livenessProbe: containerLivenessProbe( execArgs: 'ls ${HOME}', initialDelaySeconds: 10, timeoutSeconds: 5, failureThreshold: 10, periodSeconds: 10, successThreshold: 1))],
   volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)]) {
 
-  node('mavenPod') {
+  node('maven') {
     stage('build') {
-      container('maven') {
-
+      container('jnlp') {
+          sh 'ls . -lrta'
       }
     }
   }
