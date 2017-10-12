@@ -169,7 +169,8 @@ objects:
                   value: "true"
               resources:
                 limits:
-                  memory: "1024Mi"
+                  memory: "4096Mi"
+                  cpu: 2
               volumeMounts:
                 - name: "${JENKINS_SERVICE_NAME}-data"
                   mountPath: "/var/lib/jenkins"
