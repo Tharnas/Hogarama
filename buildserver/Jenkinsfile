@@ -1,7 +1,7 @@
 def mavenImage = '${env.JENKINS_SLAVE_IMAGE_MAVEN}'
 
 podTemplate(cloud: 'openshift', label: 'testPod', containers: [
-  containerTemplate(name: 'maven', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01')],
+  containerTemplate(name: 'maven', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01', command: 'mvn clean install')],
   volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)]) {
 
   node('testPod') {
