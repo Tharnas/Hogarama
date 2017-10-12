@@ -161,6 +161,14 @@ objects:
                   value: "GIT_REPO_URL"
                 - name: "HOGARAMA_GIT_REF"
                   value: "GIT_REPO_REF"
+                - name: "OPENSHIFT_JENKINS_JVM_ARCH"
+                  value: "x86_64"
+                - name: "OPENSHIFT_ENABLE_OAUTH"
+                  value: "true"
+                - name: "OPENSHIFT_ENABLE_REDIRECT_PROMPT"
+                  value: "true"
+                - name: "JENKINS_URL"
+                  value: http://${JENKINS_SERVICE_NAME}:80
               resources:
                 limits:
                   memory: "1024Mi"
