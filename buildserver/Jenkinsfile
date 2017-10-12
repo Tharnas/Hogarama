@@ -1,3 +1,8 @@
+/**
+ * If the slave container hung, then it could have the following reasons
+ * 1. The images need to be downloaded, therfore it seems to hung
+ * 2. A persistence volume claim is is used but the storage is not available
+ */
 podTemplate(label: 'mypod', cloud: 'openshift', containers: [
     containerTemplate(name: 'maven', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01', ttyEnabled: true, command: 'cat',
                       workingDir: '/home/jenkins',
@@ -10,12 +15,23 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
 
     node('mypod') {
         stage('Get a Maven project') {
-            git 'https://github.com/jenkinsci/kubernetes-plugin.git'
+            git url: 'https://github.com/Gepardec/Hogarama.git', branch: 'openshift_jenkins_build'
             container('maven') {
                 stage('Build a Maven project') {
-                    sh 'mvn -B clean install'
+                    // Here we define the Hogajam maven build
+                    sh "echo 'This could be your build command: \nmvn clean -f Hogajama/pom.xml'"
                 }
             }
         }
     }
 }
+
+// podTemplate(name: 'mavenPod', label: 'mavenPod', namepsace: 'hogarama-buildserver', cloud: 'openshift', containers: [
+// containerTemplate(name: 'hogarama_maven',
+//                     image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01',
+//                     ttyEnabled: true,
+//                     command: 'cat',
+//                     livenessProbe: containerLivenessProbe( execArgs: 'ls ${HOME}', initialDelaySeconds: 10, timeoutSeconds: 5, failureThreshold: 10, periodSeconds: 10, successThreshold: 1))],
+//                     volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)]) {
+//
+// }
