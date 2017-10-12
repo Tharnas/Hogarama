@@ -14,7 +14,7 @@ parameters:
     value: "hogarama-jenkins"
     required: true
 
-  - name: "JENKINS_JNLP_SERVICE_NAME"
+  - name: "JNLP_SERVICE_NAME"
     displayName: "Jenkins service name"
     value: "hogarama-jenkins-jnlp"
     required: true
@@ -152,7 +152,7 @@ objects:
                 - name: "JENKINS_SERVICE_NAME"
                   value: "${JENKINS_SERVICE_NAME}"
                 - name: "JNLP_SERVICE_NAME"
-                  value: "${JENKINS_JNLP_SERVICE_NAME}"
+                  value: "${JNLP_SERVICE_NAME}"
                 - name: "KUBERNETES_TRUST_CERTIFICATES"
                   value: "true"
                 - name: "KUBERNETES_MASTER"
@@ -161,13 +161,11 @@ objects:
                   value: "GIT_REPO_URL"
                 - name: "HOGARAMA_GIT_REF"
                   value: "GIT_REPO_REF"
-                - name: "JENKINS_SLAVE_IMAGE_MAVEN"
-                  value: "${JENKINS_SLAVE_IMAGE_MAVEN}"
               resources:
                 limits:
                   memory: "1024Mi"
               volumeMounts:
-                - name: "${JENKINS_SERVICE_NAME}"
+                - name: "${JENKINS_SERVICE_NAME}-data"
                   mountPath: "/var/lib/jenkins"
               terminationMessagePath: "/dev/termination.log"
               imagePullPolicy: "IfNotPresent"
@@ -176,7 +174,7 @@ objects:
                   capabilities:
                     privileged: false
           volumes:
-            - name: "${JENKINS_SERVICE_NAME}"
+            - name: "${JENKINS_SERVICE_NAME}-data"
               persistentVolumeClaim:
                 claimName: ${JENKINS_SERVICE_NAME}
           restartPolicy: "Always"
@@ -218,7 +216,7 @@ objects:
   - kind: "Service"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_JNLP_SERVICE_NAME}"
+      name: "${JNLP_SERVICE_NAME}"
     spec:
       ports:
         - name: "agent"
