@@ -12,7 +12,9 @@ function clear() {
 function create() {
   oc login --username ${USERNAME} --password ${PASSWORD}
   oc new-project ${PROJECT_ID}
-  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml -p "JENKINS_SERVICE_NAME=hogarama-jenkins"
+  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml \
+    -p "JENKINS_SERVICE_NAME=hogarama-jenkins" \
+    -p "JENKINS_JNLP_SERVICE_NAME=hogarama-jenkins-jnlp"
   oc logout
 }
 

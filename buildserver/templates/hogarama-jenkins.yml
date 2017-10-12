@@ -14,6 +14,11 @@ parameters:
     value: "hogarama-jenkins"
     required: true
 
+  - name: "JENKINS_JNLP_SERVICE_NAME"
+    displayName: "Jenkins service name"
+    value: "hogarama-jenkins-jnlp"
+    required: true
+
   - name: "GIT_REPO_URL"
     displayName: "Hogarama git repository url (use https:// instead of git://)"
     value: "https://github.com/Gepardec/Hogarama"
@@ -147,7 +152,7 @@ objects:
                 - name: "JENKINS_SERVICE_NAME"
                   value: "${JENKINS_SERVICE_NAME}"
                 - name: "JNLP_SERVICE_NAME"
-                  value: "${JENKINS_SERVICE_NAME}-jnlp"
+                  value: "${JENKINS_JNLP_SERVICE_NAME}"
                 - name: "KUBERNETES_TRUST_CERTIFICATES"
                   value: "true"
                 - name: "KUBERNETES_MASTER"
@@ -213,7 +218,7 @@ objects:
   - kind: "Service"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}-jnlp"
+      name: "${JENKINS_JNLP_SERVICE_NAME}"
     spec:
       ports:
         - name: "agent"
