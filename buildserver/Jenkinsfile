@@ -1,4 +1,4 @@
-podTemplate(name: 'mavenPod', label: 'mavenPod', namepsace: 'hogarama-buildserver', slaveConnectTimeout: , cloud: 'openshift', containers: [
+podTemplate(name: 'mavenPod', label: 'mavenPod', namepsace: 'hogarama-buildserver', slaveConnectTimeout: 100, cloud: 'openshift', containers: [
   containerTemplate(name: 'maven',
                     image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01',
                     ttyEnabled: true,
