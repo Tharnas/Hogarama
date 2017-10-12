@@ -1,5 +1,5 @@
 podTemplate(name: 'mavenPod', label: 'mavenPod', namepsace: 'hogarama-buildserver', slaveConnectTimeout: 100, cloud: 'openshift', containers: [
-  containerTemplate(name: 'maven',
+  containerTemplate(name: 'hogarama_maven',
                     image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01',
                     ttyEnabled: true,
                     command: 'cat',
@@ -8,9 +8,6 @@ podTemplate(name: 'mavenPod', label: 'mavenPod', namepsace: 'hogarama-buildserve
 
   node('mavenPod') {
     stage('build') {
-      container('maven') {
-          sh 'mvn clean install'
-      }
     }
   }
 }
