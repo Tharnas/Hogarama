@@ -47,7 +47,7 @@
           <instanceCap>2147483647</instanceCap>
           <idleMinutes>0</idleMinutes>
           <label>maven</label>
-          <serviceAccount>hogarama-jenkins</serviceAccount>
+          <serviceAccount>${oc_serviceaccount_name}</serviceAccount>
           <nodeSelector></nodeSelector>
           <customWorkspaceVolumeEnabled>false</customWorkspaceVolumeEnabled>
           <workspaceVolume class="org.csanchez.jenkins.plugins.kubernetes.volumes.workspace.EmptyDirWorkspaceVolume">
@@ -83,7 +83,7 @@
           <instanceCap>2147483647</instanceCap>
           <idleMinutes>0</idleMinutes>
           <label>nodejs</label>
-          <serviceAccount>hogarama-jenkins</serviceAccount>
+          <serviceAccount>${oc_serviceaccount_name}</serviceAccount>
           <nodeSelector></nodeSelector>
           <customWorkspaceVolumeEnabled>false</customWorkspaceVolumeEnabled>
           <workspaceVolume class="org.csanchez.jenkins.plugins.kubernetes.volumes.workspace.EmptyDirWorkspaceVolume">
@@ -132,9 +132,9 @@
         oRgBwexjZSJr6TOXS+WVKsV0uIC+vrSQkeVwHxuA
         -----END CERTIFICATE-----</serverCertificate>
               <skipTlsVerify>false</skipTlsVerify>
-              <namespace>hogarama-buildserver</namespace>
-              <jenkinsUrl>http://:</jenkinsUrl>
-              <jenkinsTunnel>172.30.172.190:50000</jenkinsTunnel>
+              <namespace>${OPENSHIFT_BUILD_NAMESPACE}</namespace>
+              <jenkinsUrl>http://${JENKINS_SERVICE_NAME}</jenkinsUrl>
+              <jenkinsTunnel>${JNLP_SERVICE_NAME}:50000</jenkinsTunnel>
               <credentialsId>1a12dfa4-7fc5-47a7-aa17-cc56572a41c7</credentialsId>
               <containerCap>10</containerCap>
               <retentionTimeout>5</retentionTimeout>
