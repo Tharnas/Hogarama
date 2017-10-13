@@ -21,12 +21,12 @@ parameters:
 
   - name: "GIT_REPO_URL"
     displayName: "Hogarama git repository url (use https:// instead of git://)"
-    value: "https://github.com/Gepardec/Hogarama"
+    value: "https://github.com/Gepardec/Hogarama.git"
     required: true
 
   - name: "GIT_REPO_REF"
     displayName: "Hogarama branch"
-    value: "openshift_jenkins_build"
+    value: "JENKINS_CHANGES"
     required: true
 
   - name: "KUBERNETES_MASTER"
@@ -96,6 +96,8 @@ objects:
             kind: "ImageStreamTag"
             namespace: "openshift"
             name: "jenkins:latest"
+          secrets:
+            - secret: "buildsecret"
       output:
         to:
           kind: "ImageStreamTag"
@@ -171,19 +173,12 @@ objects:
                 limits:
                   memory: "4096Mi"
                   cpu: 2
-              volumeMounts:
-                - name: "${JENKINS_SERVICE_NAME}-data"
-                  mountPath: "/var/lib/jenkins"
               terminationMessagePath: "/dev/termination.log"
               imagePullPolicy: "IfNotPresent"
               capabilities:
                 securityContext:
                   capabilities:
                     privileged: false
-          volumes:
-            - name: "${JENKINS_SERVICE_NAME}-data"
-              persistentVolumeClaim:
-                claimName: ${JENKINS_SERVICE_NAME}
           restartPolicy: "Always"
           dnsPolicy: "ClusterFirst"
 
