@@ -24,21 +24,22 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
 
     node('mypod') {
         stage('Build') {
-            parallel
+            parallel(
               'hogajama-maven-build': {
-                git url: 'https://github.com/Gepardec/Hogarama.git', branch: "${env.GIT_REPO_REF}"
+                git url: 'https://github.com/Gepardec/Hogarama.git', branch: "master"
                 container('mqtt-client-maven-build') {
-                  sh "mvn clean install -f mqtt-client-java/mqtt-client/pom.xml"
-                },
+                  sh "mvn clean install -f Hogajama/pom.xml"
+                }
+              },
               'mqtt-client-maven-build': {
-                  git url: 'https://github.com/Gepardec/Hogarama.git', branch: "${env.GIT_REPO_REF}"
+                  git url: 'https://github.com/Gepardec/Hogarama.git', branch: "master"
                   container('mqtt-client-maven-build') {
                     sh "mvn clean install -f mqtt-client-java/mqtt-client/pom.xml"
-                  },
+                  }
                 }
-            }
-        }
-    }
+              )
+          }
+      }
 }
 
 // podTemplate(name: 'mavenPod', label: 'mavenPod', namepsace: 'hogarama-buildserver', cloud: 'openshift', containers: [

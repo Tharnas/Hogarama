@@ -14,7 +14,7 @@ function create() {
   oc new-project ${PROJECT_ID}
   #oc create -f ${SCRIPT_DIR}/templates/pvc.yaml
   oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml \
-    -p "JENKINS_SERVICE_NAME=hogarama-jenkins" \
+    -p "JENKINS_SERVICE_HOST=hogarama-jenkins" \
     -p "JNLP_SERVICE_NAME=hogarama-jenkins-jnlp"
   oc logout
 }
