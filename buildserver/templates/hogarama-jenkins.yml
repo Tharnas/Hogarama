@@ -100,7 +100,7 @@ objects:
           from:
             kind: "ImageStreamTag"
             namespace: "openshift"
-            name: "jenkins:latest"
+            name: "jenkins:2"
           secrets:
             - secret: "buildsecret"
       output:
