@@ -9,7 +9,7 @@ metadata:
     tags: "instant-app,jenkins"
 
 parameters:
-  - name: "JENKINS_SERVICE_NAME"
+  - name: "JENKINS_SERVICE_HOST"
     displayName: "Jenkins service name"
     value: "hogarama-jenkins"
     required: true
@@ -48,14 +48,14 @@ objects:
   - kind: "ServiceAccount"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}"
+      name: "${JENKINS_SERVICE_HOST}"
       annotations:
-        serviceaccounts.openshift.io/oauth-redirectreference.jenkins: "{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"${JENKINS_SERVICE_NAME}\"}}"
+        serviceaccounts.openshift.io/oauth-redirectreference.jenkins: "{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"${JENKINS_SERVICE_HOST}\"}}"
 
   - kind: "PersistentVolumeClaim"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}"
+      name: "${JENKINS_SERVICE_HOST}"
     spec:
       accessModes:
         - "ReadWriteOnce"
@@ -66,10 +66,10 @@ objects:
   - kind: "RoleBinding"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}_edit"
+      name: "${JENKINS_SERVICE_HOST}_edit"
     groupNames: null
     subjects:
-      - name: "${JENKINS_SERVICE_NAME}"
+      - name: "${JENKINS_SERVICE_HOST}"
         kind: "ServiceAccount"
     roleRef:
       name: "edit"
@@ -77,16 +77,16 @@ objects:
   - kind: "ImageStream"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}"
+      name: "${JENKINS_SERVICE_HOST}"
       labels:
-        application: "${JENKINS_SERVICE_NAME}"
+        application: "${JENKINS_SERVICE_HOST}"
 
   - kind: "BuildConfig"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}"
+      name: "${JENKINS_SERVICE_HOST}"
       labels:
-        application: "${JENKINS_SERVICE_NAME}"
+        application: "${JENKINS_SERVICE_HOST}"
     spec:
       source:
         type: "Git"
@@ -106,7 +106,7 @@ objects:
       output:
         to:
           kind: "ImageStreamTag"
-          name: "${JENKINS_SERVICE_NAME}:latest"
+          name: "${JENKINS_SERVICE_HOST}:latest"
       triggers:
         - type: "ImageChange"
           imageChange:
@@ -114,7 +114,7 @@ objects:
   - kind: "DeploymentConfig"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}"
+      name: "${JENKINS_SERVICE_HOST}"
       annotations:
         template.alpha.openshift.io/wait-for-ready: "true"
     spec:
@@ -122,25 +122,25 @@ objects:
         type: "Recreate"
       replicas: "1"
       selector:
-        name: "${JENKINS_SERVICE_NAME}"
+        name: "${JENKINS_SERVICE_HOST}"
       triggers:
         - type: "ImageChange"
           imageChangeParams:
             automatic: true
             containerNames:
-              - "${JENKINS_SERVICE_NAME}"
+              - "${JENKINS_SERVICE_HOST}"
             from:
               kind: "ImageStreamTag"
-              name: "${JENKINS_SERVICE_NAME}:latest"
+              name: "${JENKINS_SERVICE_HOST}:latest"
         - type: "ConfigChange"
       template:
         metadata:
           labels:
-            name: "${JENKINS_SERVICE_NAME}"
+            name: "${JENKINS_SERVICE_HOST}"
         spec:
-          serviceAccountName: "${JENKINS_SERVICE_NAME}"
+          serviceAccountName: "${JENKINS_SERVICE_HOST}"
           containers:
-            - name: "${JENKINS_SERVICE_NAME}"
+            - name: "${JENKINS_SERVICE_HOST}"
               image: " "
               readinessProbe:
                 timeoutSeconds: 10
@@ -156,8 +156,8 @@ objects:
                   path: "/login"
                   port: 8080
               env:
-                - name: "JENKINS_SERVICE_NAME"
-                  value: "${JENKINS_SERVICE_NAME}"
+                - name: "JENKINS_SERVICE_HOST"
+                  value: "${JENKINS_SERVICE_HOST}"
                 - name: "JNLP_SERVICE_NAME"
                   value: "${JNLP_SERVICE_NAME}"
                 - name: "KUBERNETES_TRUST_CERTIFICATES"
@@ -181,7 +181,7 @@ objects:
                   memory: "4096Mi"
                   cpu: "2000m"
               volumeMounts:
-                - name: "${JENKINS_SERVICE_NAME}"
+                - name: "${JENKINS_SERVICE_HOST}"
                   mountPath: "/var/lib/jenkins"
               terminationMessagePath: "/dev/termination.log"
               imagePullPolicy: "IfNotPresent"
@@ -190,20 +190,20 @@ objects:
                   capabilities:
                     privileged: false
           volumes:
-            - name: "${JENKINS_SERVICE_NAME}"
+            - name: "${JENKINS_SERVICE_HOST}"
               persistentVolumeClaim:
-                claimName: ${JENKINS_SERVICE_NAME}
+                claimName: ${JENKINS_SERVICE_HOST}
 
   - kind: "Route"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}"
+      name: "${JENKINS_SERVICE_HOST}"
       annotations:
         template.openshift.io/expose-uri: "http://{.spec.host}{.spec.path}"
     spec:
       to:
         kind: "Service"
-        name: "${JENKINS_SERVICE_NAME}"
+        name: "${JENKINS_SERVICE_HOST}"
       tls:
         termination: "edge"
         insecureEdgeTerminationPolicy: "Redirect"
@@ -211,7 +211,7 @@ objects:
   - kind: "Service"
     apiVersion: "v1"
     metadata:
-      name: "${JENKINS_SERVICE_NAME}"
+      name: "${JENKINS_SERVICE_HOST}"
       annotations:
         service.alpha.openshift.io/dependencies: "[{\"name\": \"${JNLP_SERVICE_NAME}\", \"namespace\": \"\", \"kind\": \"Service\"}]"
         service.openshift.io/infrastructure: "true"
@@ -223,7 +223,7 @@ objects:
           targetPort: 8080
           nodePort: 0
       selector:
-        name:  "${JENKINS_SERVICE_NAME}"
+        name:  "${JENKINS_SERVICE_HOST}"
       type: "ClusterIP"
       sessionAffinity: "None"
 
@@ -239,6 +239,6 @@ objects:
           targetPort: 50000
           nodePort: 0
       selector:
-        name:  "${JENKINS_SERVICE_NAME}"
+        name:  "${JENKINS_SERVICE_HOST}"
       type: "ClusterIP"
       sessionAffinity: "None"
