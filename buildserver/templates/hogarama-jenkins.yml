@@ -180,14 +180,19 @@ objects:
                 limits:
                   memory: "4096Mi"
                   cpu: "2000m"
+              volumeMounts:
+                - name: "${JENKINS_SERVICE_NAME}"
+                  mountPath: "/var/lib/jenkins"
               terminationMessagePath: "/dev/termination.log"
               imagePullPolicy: "IfNotPresent"
               capabilities:
                 securityContext:
                   capabilities:
                     privileged: false
-          restartPolicy: "Always"
-          dnsPolicy: "ClusterFirst"
+          volumes:
+            - name: "${JENKINS_SERVICE_NAME}"
+              persistentVolumeClaim:
+                claimName: ${JENKINS_SERVICE_NAME}
 
   - kind: "Route"
     apiVersion: "v1"
