@@ -11,12 +11,12 @@ metadata:
 parameters:
   - name: "JENKINS_SERVICE_HOST"
     displayName: "Jenkins service name"
-    value: "hogarama-jenkins"
+    value: "jenkins"
     required: true
 
   - name: "JNLP_SERVICE_NAME"
     displayName: "Jenkins service name"
-    value: "hogarama-jenkins-jnlp"
+    value: "jenkins-jnlp"
     required: true
 
   - name: "GIT_REPO_URL"
@@ -102,7 +102,7 @@ objects:
             namespace: "openshift"
             name: "jenkins:2"
           secrets:
-            - secret: "buildsecret"
+            - secret: "sshbuildsecret"
       output:
         to:
           kind: "ImageStreamTag"
@@ -156,14 +156,10 @@ objects:
                   path: "/login"
                   port: 8080
               env:
-                - name: "JENKINS_SERVICE_HOST"
-                  value: "${JENKINS_SERVICE_HOST}"
                 - name: "JNLP_SERVICE_NAME"
                   value: "${JNLP_SERVICE_NAME}"
                 - name: "KUBERNETES_TRUST_CERTIFICATES"
                   value: "true"
-                - name: "KUBERNETES_MASTER"
-                  value: "${KUBERNETES_MASTER}"
                 - name: "GIT_REPO_URL"
                   value: "${GIT_REPO_URL}"
                 - name: "GIT_REPO_REF"
@@ -176,6 +172,8 @@ objects:
                   value: "true"
                 - name: "JENKINS_FILE"
                   value: "${JENKINS_FILE}"
+                - name: "GIT_SSL_NO_VERIFY"
+                  value: "true"
               resources:
                 limits:
                   memory: "4096Mi"

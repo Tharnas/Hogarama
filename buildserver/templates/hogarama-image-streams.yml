@@ -1,0 +1,20 @@
+kind: "ImageStreamList"
+apiVersion: "v1"
+items:
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: "hogarama-jenkins"
+      annotations:
+        openshift.io/display-name: "hogarama-jenkins"
+    spec:
+      tags:
+        - name: latest
+          annotations:
+            openshift.io/display-name: "hogarama-jenkins"
+            iconClass: "icon-jenkins"
+            tags: "hogarama"
+            version: "latest"
+          from:
+            kind: "DockerImage"
+            name: "gepardec/hogarama-jenkins"

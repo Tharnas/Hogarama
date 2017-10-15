@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: pipelines
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "hogarama-jenkins"
+  annotations:
+    openshift.io/display-name: "Jenkins (Hogarama)"
+    description: "Jenkins Service for building and testing the Hogarama project"
+    iconClass: "icon-jenkins"
+    tags: "instant-app,jenkins"
+
+parameters:
+  - name: "JENKINS_SERVICE_HOST"
+    displayName: "Jenkins service name"
+    value: "jenkins"
+    required: true
+
+objects:
+  # Pipeline for HOgarama based on provided openshift3 jenkns image
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      annotations:
+        pipeline.alpha.openshift.io/uses: '[{"name": "${JENKINS_SERVICE_NAME}", "namespace": "", "kind": "DeploymentConfig"}]'
+      labels:
+        name: "hogarama-jenkins-pipeline"
+      name: "hogarama-jenkins-pipeline"
+    spec:
+      strategy:
+        jenkinsPipelineStrategy:
+          jenkinsfile: |-
+            podTemplate(label: 'mypod', cloud: 'openshift', containers: [
+                containerTemplate(name: 'hogajama-maven-build', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01', ttyEnabled: true, command: 'cat',
+                                  workingDir: '/home/jenkins',
+                                  alwaysPullImage: true,
+                                  resourceRequestCpu: '100m',
+                                  resourceLimitCpu: '200m',
+                                  resourceRequestMemory: '512Mi',
+                                  resourceLimitMemory: '1024Mi',
+                                  volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)]),
+                containerTemplate(name: 'mqtt-client-maven-build', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01', ttyEnabled: true, command: 'cat',
+                                  workingDir: '/home/jenkins',
+                                  alwaysPullImage: true,
+                                  resourceRequestCpu: '100m',
+                                  resourceLimitCpu: '200m',
+                                  resourceRequestMemory: '512Mi',
+                                  resourceLimitMemory: '1024Mi',
+                                  volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)])
+              ]) {
+
+                node('mypod') {
+                    stage('Build') {
+                        parallel(
+                          'hogajama-maven-build': {
+                            git url: 'https://github.com/Gepardec/Hogarama.git', branch: "master"
+                            container('mqtt-client-maven-build') {
+                              sh "mvn clean install -f Hogajama/pom.xml"
+                            }
+                          },
+                          'mqtt-client-maven-build': {
+                              git url: 'https://github.com/Gepardec/Hogarama.git', branch: "master"
+                              container('mqtt-client-maven-build') {
+                                sh "mvn clean install -f mqtt-client-java/mqtt-client/pom.xml"
+                              }
+                            }
+                          )
+                      }
+                  }
+            }
+        type: JenkinsPipeline

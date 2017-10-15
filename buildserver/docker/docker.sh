@@ -20,6 +20,10 @@ function build(){
     --tag ${MAVEN_TAG_HUB}:${TAG_VERSION_MAVEN} \
     --tag ${MAVEN_TAG_HUB}:latest  \
     slave-maven/
+
+    # Build s2i images
+    s2i --loglevel 5 --ref master build https://github.com/Gepardec/Hogarama openshift/jenkins-2-centos7 ${JENKINS_TAG}
+    docker tag  ${JENKINS_TAG} ${JENKINS_TAG_HUB}
 }
 
 function push(){
@@ -30,6 +34,7 @@ function push(){
   docker push ${ORACLE_TAG_HUB}:${TAG_VERSION_ORACLE}
   docker push ${MAVEN_TAG_HUB}:${TAG_VERSION_MAVEN}
   docker push ${MAVEN_TAG_HUB}:latest
+  docker push ${JENKINS_TAG_HUB}:latest
   # Logout of docker hub
   docker logout ${REGISTRY_HUB}
 }
