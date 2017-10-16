@@ -9,15 +9,18 @@ function clear() {
   oc logout
 }
 
-function create() {
+function create_pipeline_git() {
   oc login --username ${USERNAME} --password ${PASSWORD}
   oc new-project ${PROJECT_ID}
   #oc create -f ${SCRIPT_DIR}/templates/pvc.yaml
   #oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml \
   #  -p "JENKINS_SERVICE_HOST=hogarama-jenkins" \
   #  -p "JNLP_SERVICE_NAME=hogarama-jenkins-jnlp"
-  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline.yml \
-    -p "JENKINS_SERVICE_HOST=hogarama-pipeline"
+  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline-git.yml \
+    -p "APP_NAME=hogajama" \
+    -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
+    -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
+    -p "JENKINS_FILE_PATH=Hogajama/Jenkinsfile"
 
   oc logout
 }

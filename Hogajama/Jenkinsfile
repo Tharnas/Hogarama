@@ -15,5 +15,6 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
           container('hogajama-maven') {
             sh "mvn clean install -f Hogajama/pom.xml"
           }
-      }
+       }
+   }
 }
