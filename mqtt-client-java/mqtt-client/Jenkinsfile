@@ -11,7 +11,7 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
 
     node('mypod') {
         stage('Build') {
-          git url: '${GIT_REPO}', branch: "${GIT_REF}"
+          git url: "${GIT_REPO}", branch: "${GIT_REF}"
           container('mqtt-client-maven-build') {
             sh "mvn -s /.m2/settings.xml clean test -f mqtt-client-java/mqtt-client/pom.xml"
           }

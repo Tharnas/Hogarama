@@ -1,19 +1,19 @@
 // envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: '${MAVEN_MIRROR_URL}')])
 
 podTemplate(label: 'mypod', cloud: 'openshift', containers: [
-    containerTemplate(name: 'hogarama-maven-build', image: 'maven', ttyEnabled: true, command: 'cat',
+    containerTemplate(name: 'hogarama-maven-build', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01', ttyEnabled: true, command: 'cat',
                       workingDir: '/home/jenkins',
                       alwaysPullImage: true,
                       resourceRequestCpu: '1000m',
                       resourceLimitCpu: '2000m',
                       resourceRequestMemory: '512Mi',
                       resourceLimitMemory: '1024Mi',
-                      envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: '${MAVEN_MIRROR_URL}')],
+                      envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: "${MAVEN_MIRROR_URL}")],
                       volumes: [persistentVolumeClaim(mountPath: '/.m2', claimName: 'maven-repo', readOnly: false)])
   ]) {
     node('mypod') {
         stage('Build') {
-          git url: '${GIT_REPO}', branch: "${GIT_REF}"
+          git url: "${GIT_REPO}", branch: "${GIT_REF}"
           container('hogarama-maven-build') {
             sh "mvn clean test -f Hogajama/pom.xml"
           }
