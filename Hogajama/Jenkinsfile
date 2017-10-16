@@ -11,7 +11,7 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
 
     node('mypod') {
         stage('Build') {
-          git url: '${env.GIT_REPO}', branch: "${env.GIT_REF}"
+          git url: '${GIT_REPO}', branch: "${GIT_REF}"
           container('hogajama-maven') {
             sh "mvn clean install -f Hogajama/pom.xml"
           }

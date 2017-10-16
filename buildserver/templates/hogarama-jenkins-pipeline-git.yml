@@ -48,12 +48,12 @@ objects:
           ref: "${GIT_REF}"
       strategy:
         jenkinsPipelineStrategy:
+          env:
+            - name: "APP_NAME"
+              value: "{APP_NAME}"
+            - name: "GIT_REPO"
+              value: "{GIT_REPO}"
+            - name: "GIT_REF"
+              value: "{GIT_REF}"
           jenkinsfilePath: "${JENKINS_FILE_PATH}"
-        env:
-          - name: "APP_NAME"
-            value: "{APP_NAME}"
-          - name: "GIT_REPO"
-            value: "{GIT_REPO}"
-          - name: "GIT_REF"
-            value: "{GIT_REF}"
         type: JenkinsPipeline
