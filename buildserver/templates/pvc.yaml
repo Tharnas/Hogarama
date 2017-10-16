@@ -1,4 +1,5 @@
 apiVersion: v1
+kind: List
 items:
   - apiVersion: "v1"
     kind: "PersistentVolumeClaim"
@@ -11,7 +12,3 @@ items:
         requests:
           storage: "5Gi"
       volumeName: "pv0001"
-kind: List
-metadata: {}
-resourceVersion: ""
-selfLink: ""

@@ -18,3 +18,41 @@ items:
           from:
             kind: "DockerImage"
             name: "gepardec/hogarama-jenkins"
+
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: "hogarama-jenkins-slave-maven"
+      annotations:
+        openshift.io/display-name: "hogarama-jenkins-slave-maven"
+      label:
+        role: "jenkins-slave"
+    spec:
+      tags:
+        - name: latest
+          annotations:
+            openshift.io/display-name: "hogarama-jenkins-slave-maven"
+            tags: "hogarama-jenkins-slave-maven"
+            version: "latest"
+          from:
+            kind: "DockerImage"
+            name: "gdhet/hogarama-jenkins-slave-maven-rhel7-docker"
+
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: "hogarama-jenkins-slave-oracle"
+      annotations:
+        openshift.io/display-name: "hogarama-jenkins-slave-oracle"
+      label:
+        role: "jenkins-slave"
+    spec:
+      tags:
+        - name: latest
+          annotations:
+            openshift.io/display-name: "hogarama-jenkins-slave-oracle"
+            tags: "hogarama-jenkins-slave-oracle"
+            version: "latest"
+          from:
+            kind: "DockerImage"
+            name: "gdhet/hogarama-jenkins-slave-oracle-rhel7-docker"

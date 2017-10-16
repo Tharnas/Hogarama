@@ -15,15 +15,15 @@ metadata:
 
 parameters:
   - name: "APP_NAME"
-    displayName: "Jenkins service name"
+    displayName: "THe name of the app, the build pipeline is for"
     required: true
 
   - name: "GIT_REPO"
-    displayName: "The https link to the git repo providing the Jenkinsfile"
+    displayName: "The https url to the app's git repository"
     required: true
 
   - name: "GIT_REF"
-    displayName: "The branch of the repository to build"
+    displayName: "The git ref of the repository to build"
     required: true
 
   - name: "JENKINS_FILE_PATH"
@@ -50,10 +50,10 @@ objects:
         jenkinsPipelineStrategy:
           env:
             - name: "APP_NAME"
-              value: "{APP_NAME}"
+              value: "${APP_NAME}"
             - name: "GIT_REPO"
-              value: "{GIT_REPO}"
+              value: "${GIT_REPO}"
             - name: "GIT_REF"
-              value: "{GIT_REF}"
+              value: "${GIT_REF}"
           jenkinsfilePath: "${JENKINS_FILE_PATH}"
         type: JenkinsPipeline

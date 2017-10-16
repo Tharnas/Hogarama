@@ -21,6 +21,11 @@ function create_pipeline_git() {
     -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
     -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
     -p "JENKINS_FILE_PATH=Hogajama/Jenkinsfile"
+  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline-git.yml \
+    -p "APP_NAME=mqtt-java-lcient" \
+    -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
+    -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
+    -p "JENKINS_FILE_PATH=mqtt-client-java/mqtt-client/Jenkinsfile"
 
   oc logout
 }
