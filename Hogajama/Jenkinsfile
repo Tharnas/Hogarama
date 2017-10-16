@@ -13,7 +13,7 @@ containerTemplate(name: 'maven', ttyEnabled: true, command: 'cat',
     node('mypod') {
         stage('Build') {
           git url: '${GIT_REPO}', branch: "${GIT_REF}"
-          container('hogajama-maven') {
+          container('maven') {
             sh "mvn clean test -f Hogajama/pom.xml"
           }
        }
