@@ -9,6 +9,30 @@ function clear() {
   oc logout
 }
 
+function create_nexus() {
+  oc new-app sonatype/nexus:3.6.0
+  oc expose svc/nexus
+  oc get routes
+
+  oc set probe dc/nexus \
+    --liveness \
+    --failure-threshold 3 \
+    --initial-delay-seconds 30 \
+    -- echo ok
+  oc set probe dc/nexus \
+    --readiness \
+    --failure-threshold 3 \
+    --initial-delay-seconds 30 \
+    --get-url=http://:8081/nexus/content/groups/public
+  oc volumes dc/nexus --add \
+    --name 'nexus-volume' \
+    --type 'pvc' \
+    --mount-path '/sonatype-work/' \
+    --claim-name 'nexus-pv' \
+    --claim-size '10G' \
+    --overwrite
+}
+
 function create_pipeline_git() {
   oc login --username ${USERNAME} --password ${PASSWORD}
   oc new-project ${PROJECT_ID}
@@ -16,16 +40,21 @@ function create_pipeline_git() {
   #oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml \
   #  -p "JENKINS_SERVICE_HOST=hogarama-jenkins" \
   #  -p "JNLP_SERVICE_NAME=hogarama-jenkins-jnlp"
+
+  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-nexus.yml \
+    -p "SERVICE_NAME=hogarama-nexus"
   oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline-git.yml \
     -p "APP_NAME=hogajama" \
     -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
     -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
-    -p "JENKINS_FILE_PATH=Hogajama/Jenkinsfile"
+    -p "JENKINS_FILE_PATH=Hogajama/Jenkinsfile" \
+    -p "MAVEN_MIRROR_URL=http://hogarama-nexus:8081/nexus/content/groups/public"
   oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline-git.yml \
     -p "APP_NAME=mqtt-java-lcient" \
     -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
     -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
-    -p "JENKINS_FILE_PATH=mqtt-client-java/mqtt-client/Jenkinsfile"
+    -p "JENKINS_FILE_PATH=mqtt-client-java/mqtt-client/Jenkinsfile" \
+    -p "MAVEN_MIRROR_URL=http://hogarama-nexus:8081/nexus/content/groups/public"
 
   oc logout
 }
