@@ -1,15 +1,15 @@
 // envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: '${MAVEN_MIRROR_URL}')])
 
 podTemplate(label: 'mypod', cloud: 'openshift', containers: [
-    containerTemplate(name: 'maven', ttyEnabled: true, command: 'cat',
-                      workingDir: '/home/jenkins',
-                      alwaysPullImage: true,
-                      resourceRequestCpu: '1000m',
-                      resourceLimitCpu: '2000m',
-                      resourceRequestMemory: '512Mi',
-                      resourceLimitMemory: '1024Mi',
-                      volumes: [persistentVolumeClaim(mountPath: '/.m2', claimName: 'maven-repo', readOnly: false)])
-    ]) {
+containerTemplate(name: 'maven', ttyEnabled: true, command: 'cat',
+                  workingDir: '/home/jenkins',
+                  alwaysPullImage: true,
+                  resourceRequestCpu: '100m',
+                  resourceLimitCpu: '200m',
+                  resourceRequestMemory: '512Mi',
+                  resourceLimitMemory: '1024Mi',
+                  volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)])
+]) {
     node('mypod') {
         stage('Build') {
           git url: '${GIT_REPO}', branch: "${GIT_REF}"
