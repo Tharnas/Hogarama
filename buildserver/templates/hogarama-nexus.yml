@@ -1,36 +1,12 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: nexus2-persistent-template
+  template: nexus3-persistent-template
 metadata:
-  name: nexus2-persistent
+  name: nexus3-persistent
   annotations:
-    description: Sonatype Nexus 2 persistent template
+    description: Sonatype Nexus 3 persistent template
     tags: ci,nexus
-
-parameters:
-- name: SERVICE_NAME
-  displayName: Sonatype Nexus service name
-  required: true
-  value: nexus
-
-- name: NEXUS_VERSION
-  displayName: Sonatype Nexus version
-  required: true
-  value: 3.6.0
-
-- name: VOLUME_CAPACITY
-  displayName: Volume Space for Nexus
-  description: Volume space available for Sonatype Nexus e.g. 512Mi, 2Gi
-  required: true
-  value: 10Gi
-
-- name: MAX_MEMORY
-  displayName: Max Memory
-  description: Max memory allocated to the Nexus pod
-  required: true
-  value: 1Gi
-
 objects:
 - apiVersion: v1
   kind: ImageStream
@@ -68,7 +44,7 @@ objects:
             command:
               - "/bin/bash"
               - "-c"
-              - "curl -o /tmp/nexus-functions -s https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/scripts/nexus-functions; source /tmp/nexus-functions; add_nexus2_redhat_repos admin admin123 http://${SERVICE_NAME}:8081"
+              - "curl -o /tmp/nexus-functions -s https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/scripts/nexus-functions; source /tmp/nexus-functions; add_nexus3_redhat_repos admin admin123 http://${SERVICE_NAME}:8081"
       type: Rolling
     template:
       metadata:
@@ -98,7 +74,7 @@ objects:
           readinessProbe:
             failureThreshold: 3
             httpGet:
-              path: /content/groups/public
+              path: /
               port: 8081
               scheme: HTTP
             initialDelaySeconds: 30
@@ -112,7 +88,7 @@ objects:
               memory: 512Mi
           terminationMessagePath: /dev/termination-log
           volumeMounts:
-          - mountPath: /sonatype-work
+          - mountPath: /nexus-data
             name: ${SERVICE_NAME}-data
         dnsPolicy: ClusterFirst
         restartPolicy: Always
@@ -174,3 +150,22 @@ objects:
     resources:
       requests:
         storage: ${VOLUME_CAPACITY}
+parameters:
+- displayName: Sonatype Nexus service name
+  name: SERVICE_NAME
+  required: true
+  value: nexus
+- displayName: Sonatype Nexus version
+  name: NEXUS_VERSION
+  required: true
+  value: 3.6.0
+- description: Volume space available for Sonatype Nexus e.g. 512Mi, 2Gi
+  displayName: Volume Space for Nexus
+  name: VOLUME_CAPACITY
+  required: true
+  value: 2Gi
+- description: Max memory allocated to the Nexus pod
+  displayName: Max Memory
+  name: MAX_MEMORY
+  required: true
+  value: 1Gi

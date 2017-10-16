@@ -6,9 +6,9 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
                       resourceLimitCpu: '2000m',
                       resourceRequestMemory: '512Mi',
                       resourceLimitMemory: '1024Mi',
-                      envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: '${MAVEN_MIRROR_URL}')])
+                      volumes: [persistentVolumeClaim(mountPath: '/.m2', claimName: 'maven-repo', readOnly: false)]
   ]) {
-
+// envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: '${MAVEN_MIRROR_URL}')])
     node('mypod') {
         stage('Build') {
           git url: '${GIT_REPO}', branch: "${GIT_REF}"
