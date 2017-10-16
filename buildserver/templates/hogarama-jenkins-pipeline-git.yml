@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: pipelines
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "hogarama-jenkins"
+  annotations:
+    openshift.io/display-name: "Jenkins (Hogarama)"
+    description: "Jenkins Service for building and testing the Hogarama project"
+    iconClass: "icon-jenkins"
+    tags: "instant-app,jenkins"
+
+parameters:
+  - name: "APP_NAME"
+    displayName: "Jenkins service name"
+    required: true
+
+  - name: "GIT_REPO"
+    displayName: "The https link to the git repo providing the Jenkinsfile"
+    required: true
+
+  - name: "GIT_REF"
+    displayName: "The branch of the repository to build"
+    required: true
+
+  - name: "JENKINS_FILE_PATH"
+    displayName: "The fully qualified path to the Jenkinsfile"
+    value: "Jenkinsfile"
+    required: true
+
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      annotations:
+        pipeline.alpha.openshift.io/uses: '[{"name": "${APP_NAME}", "namespace": "", "kind": "DeploymentConfig"}]'
+      labels:
+        name: "${APP_NAME}-jenkins-pipeline"
+      name: "${APP_NAME}-jenkins-pipeline"
+    spec:
+      source:
+        type: "Git"
+        git:
+          uri: "${GIT_REPO}"
+          ref: "${GIT_REF}"
+      strategy:
+        jenkinsPipelineStrategy:
+          jenkinsfilePath: "${JENKINS_FILE_PATH}"
+        env:
+          - name: "APP_NAME"
+            value: "{APP_NAME}"
+          - name: "GIT_REPO"
+            value: "{GIT_REPO}"
+          - name: "GIT_REF"
+            value: "{GIT_REF}"
+        type: JenkinsPipeline
