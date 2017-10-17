@@ -3,10 +3,10 @@
   <localRepository>${env.M2_HOME}/repository</localRepository>
 
   <mirrors>
-    <mirror>\
-      <id>mirror.default</id>\
-      <url>$MAVEN_MIRROR_URL</url>\
-      <mirrorOf>external:*</mirrorOf>\
-    </mirror>"
+    <mirror>
+      <id>mirror.default</id>
+      <url>$MAVEN_MIRROR_URL</url>
+      <mirrorOf>external:*</mirrorOf>
+    </mirror>
   </mirrors>
 </settings>
