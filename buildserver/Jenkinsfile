@@ -7,6 +7,7 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
                       resourceRequestMemory: '512Mi',
                       resourceLimitMemory: '1024Mi',
                       slaveConnectTimeout: 180,
+                      envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: "${MAVEN_MIRROR_URL}")],
                       volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)]),
     containerTemplate(name: 'mqtt-client-maven-build', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01', ttyEnabled: true, command: 'cat',
                       workingDir: '/home/jenkins',
@@ -16,6 +17,7 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
                       resourceRequestMemory: '512Mi',
                       resourceLimitMemory: '1024Mi',
                       slaveConnectTimeout: 180,
+                      envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: "${MAVEN_MIRROR_URL}")],
                       volumes: [persistentVolumeClaim(mountPath: '/.m2/repository', claimName: 'maven-repo', readOnly: false)])
   ]) {
 
@@ -23,13 +25,13 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
         stage('Build') {
             parallel(
               'hogajama-maven-build': {
-                git url: "${GIT_REPO}", branch: "${GIT_REF}"
-                container('hogajama-maven-build') {
-                  sh "mvn -s Hogajama/build/settings.xml clean install -f Hogajama/pom.xml"
-                }
+                  git url: "${GIT_REPO}", branch: "${GIT_REF}"
+                  container('hogajama-maven-build') {
+                    sh "mvn -s Hogajama/build/settings.xml clean install -f Hogajama/pom.xml"
+                  }
               },
               'mqtt-client-maven-build': {
-                git url: "${GIT_REPO}", branch: "${GIT_REF}"
+                  git url: "${GIT_REPO}", branch: "${GIT_REF}"
                   container('mqtt-client-maven-build') {
                     sh "mvn -s mqtt-client-java/build/settings.xml clean install -f mqtt-client-java/mqtt-client/pom.xml"
                   }
