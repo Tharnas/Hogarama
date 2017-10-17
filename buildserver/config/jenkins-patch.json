@@ -1,0 +1,1 @@
+{	"jenkinsPipelineConfig": { "autoProvisionEnabled": true,"parameters": null,"serviceName": "hogarama-jenkins","templateName": "hogarama-jenkins","templateNamespace": "gepardec"}}

@@ -17,6 +17,11 @@ function create_pipeline_git() {
   #  -p "JENKINS_SERVICE_HOST=hogarama-jenkins" \
   #  -p "JNLP_SERVICE_NAME=hogarama-jenkins-jnlp"
 
+  # Setup openshift platform
+  oc create namespace Gepardec
+  oc create -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml -n ${NAMESPACE}
+
+  # Create apps
   oc new-app -f ${SCRIPT_DIR}/templates/hogarama-nexus.yml \
     -p "SERVICE_NAME=hogarama-nexus"
   oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline-git.yml \
@@ -42,5 +47,5 @@ function restore() {
 USERNAME=${2:-"developer"}
 PASSWORD=${3:-"developer"}
 PROJECT_ID=${4:-"hogarama-buildserver"}
-
+NAMESPACE='gepardec'
 ${1}
