@@ -6,6 +6,8 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
                       resourceLimitCpu: '2000m',
                       resourceRequestMemory: '512Mi',
                       resourceLimitMemory: '1024Mi',
+                      slaveConnectTimeout: 180,
+                      envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: "${MAVEN_MIRROR_URL}")],
                       volumes: [persistentVolumeClaim(mountPath: '/.m2', claimName: 'maven-repo', readOnly: false)])
   ]) {
 

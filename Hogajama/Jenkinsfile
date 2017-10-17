@@ -8,6 +8,7 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
                       resourceLimitCpu: '2000m',
                       resourceRequestMemory: '512Mi',
                       resourceLimitMemory: '1024Mi',
+                      slaveConnectTimeout: 180,
                       envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: "${MAVEN_MIRROR_URL}")],
                       volumes: [persistentVolumeClaim(mountPath: '/.m2', claimName: 'maven-repo', readOnly: false)])
   ]) {
@@ -15,7 +16,7 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
         stage('Build') {
           git url: "${GIT_REPO}", branch: "${GIT_REF}"
           container('hogarama-maven-build') {
-            sh "mvn -s Hogajama/s ettings.xml clean test -f Hogajama/pom.xml"
+            sh "mvn -s Hogajama/settings.xml clean test -f Hogajama/pom.xml"
           }
        }
    }
