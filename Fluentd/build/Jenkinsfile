@@ -1,5 +1,7 @@
+// See: https://github.com/openshift/jenkins-plugin
 node {
   stage('Build') {
+    // Triggers the Fluentd Openshift BuildConfig
     openshiftBuild(buildConfig: 'hogarama-fluentd-build', showBuildLogs: true);
  }
 }

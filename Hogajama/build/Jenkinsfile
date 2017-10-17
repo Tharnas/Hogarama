@@ -1,4 +1,4 @@
-// envVars: [envVar(key: 'MAVEN_MIRROR_URL', value: '${MAVEN_MIRROR_URL}')])
+// See: https://github.com/jenkinsci/kubernetes-plugin
 
 podTemplate(label: 'mypod', cloud: 'openshift', containers: [
     containerTemplate(name: 'hogarama-maven-build', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01', ttyEnabled: true, command: 'cat',

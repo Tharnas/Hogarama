@@ -23,18 +23,22 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
         stage('Build') {
             parallel(
               'hogajama-maven-build': {
-                git url: 'https://github.com/Gepardec/Hogarama.git', branch: "master"
-                container('mqtt-client-maven-build') {
+                git url: "${GIT_REPO}", branch: "${GIT_REF}"
+                container('hogajama-maven-build') {
                   sh "mvn -s Hogajama/build/settings.xml clean install -f Hogajama/pom.xml"
                 }
               },
               'mqtt-client-maven-build': {
-                  git url: 'https://github.com/Gepardec/Hogarama.git', branch: "master"
+                git url: "${GIT_REPO}", branch: "${GIT_REF}"
                   container('mqtt-client-maven-build') {
                     sh "mvn -s mqtt-client-java/build/settings.xml clean install -f mqtt-client-java/mqtt-client/pom.xml"
                   }
-                }
-              )
-          }
-      }
+              },
+              'fluents-openshift-build': {
+                  // Triggers the Fluentd Openshift BuildConfig
+                  openshiftBuild(buildConfig: 'hogarama-fluentd-build', showBuildLogs: true);
+              }
+          )
+        }
+    }
 }

@@ -57,6 +57,12 @@ function create_pipelines() {
     -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
     -p "JENKINS_FILE_PATH=Fluentd/build/Jenkinsfile" \
     -p "MAVEN_MIRROR_URL=http://hogarama-nexus:8081/repository/maven-public/"
+  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline-git.yml \
+    -p "APP_NAME=all-parallel" \
+    -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
+    -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
+    -p "JENKINS_FILE_PATH=buildserver/Jenkinsfile" \
+    -p "MAVEN_MIRROR_URL=http://hogarama-nexus:8081/repository/maven-public/"
 
   oc logout
 
