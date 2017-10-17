@@ -15,7 +15,7 @@ podTemplate(label: 'mypod', cloud: 'openshift', containers: [
         stage('Build') {
           git url: "${GIT_REPO}", branch: "${GIT_REF}"
           container('hogarama-maven-build') {
-            sh "mvn clean test -f Hogajama/pom.xml"
+            sh "mvn -s Hogajama/s ettings.xml clean test -f Hogajama/pom.xml"
           }
        }
    }

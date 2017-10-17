@@ -39,6 +39,3 @@ LABEL com.redhat.component="hogarama-jenkins-slave-maven-rhel7-docker" \
 
  # Change permissions for maven directory
  RUN chmod -R 777 ${M2_HOME}
-
- # Run the Jenkins JNLP client
-ENTRYPOINT ["/usr/local/bin/run-jnlp-client"]
