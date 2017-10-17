@@ -5,7 +5,7 @@
   <mirrors>
     <mirror>
       <id>mirror.default</id>
-      <url>$MAVEN_MIRROR_URL</url>
+      <url>${env.MAVEN_MIRROR_URL}</url>
       <mirrorOf>external:*</mirrorOf>
     </mirror>
   </mirrors>
