@@ -22,7 +22,7 @@ function build(){
     slave-maven/
 
     # Build s2i images
-    s2i --loglevel 5 --ref master build https://github.com/Gepardec/Hogarama openshift/jenkins-2-centos7 ${JENKINS_TAG}
+    s2i --loglevel 5 --ref master --context-dir buildserver/s2i/jenkins-ci build https://github.com/Gepardec/Hogarama openshift/jenkins-2-centos7 ${JENKINS_TAG}
     docker tag  ${JENKINS_TAG} ${JENKINS_TAG_HUB}
 }
 
