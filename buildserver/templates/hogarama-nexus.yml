@@ -64,7 +64,7 @@ objects:
               - ok
             successThreshold: 1
             failureThreshold: 20
-            initialDelaySeconds: 300
+            initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
           name: ${SERVICE_NAME}
@@ -79,7 +79,7 @@ objects:
               scheme: HTTP
             successThreshold: 1
             failureThreshold: 20
-            initialDelaySeconds: 300
+            initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 5
           resources:

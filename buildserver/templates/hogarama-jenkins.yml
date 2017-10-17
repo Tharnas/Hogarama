@@ -143,8 +143,8 @@ objects:
               readinessProbe:
                 successThreshold: 1
                 failureThreshold: 20
-                timeoutSeconds: 1
-                initialDelaySeconds: 300
+                timeoutSeconds: 5
+                initialDelaySeconds: 60
                 periodSeconds: 10
                 httpGet:
                   path: "/login"
@@ -152,8 +152,8 @@ objects:
               livenessProbe:
                 successThreshold: 1
                 failureThreshold: 20
-                timeoutSeconds: 1
-                initialDelaySeconds: 300
+                timeoutSeconds: 5
+                initialDelaySeconds: 60
                 periodSeconds: 10
                 httpGet:
                   path: "/login"
