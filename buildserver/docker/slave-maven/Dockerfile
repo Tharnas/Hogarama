@@ -33,7 +33,9 @@ LABEL com.redhat.component="hogarama-jenkins-slave-maven-rhel7-docker" \
      && ln -s ${MAVEN_HOME}/bin/mvnDebug /usr/bin/mvnDebug
 
  # Add default settigns.xml
- COPY maven/settings.xml ${M2_HOME}/settings.xml
+ COPY contrib/settings.xml ${M2_HOME}/settings.xml
+ COPY contrib/scl_enable /usr/local/bin/scl_enable
+ COPY contrib/configure-slave /usr/local/bin/configure-slave
 
  # Change permissions for maven directory
  RUN chmod -R 777 ${M2_HOME}

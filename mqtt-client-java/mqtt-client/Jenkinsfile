@@ -1,5 +1,5 @@
 podTemplate(label: 'mypod', cloud: 'openshift', containers: [
-    containerTemplate(name: 'mqtt-client-maven-build', image: 'maven', ttyEnabled: true, command: 'cat',
+    containerTemplate(name: 'mqtt-client-maven-build', image: 'gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01', ttyEnabled: true, command: 'cat',
                       workingDir: '/home/jenkins',
                       alwaysPullImage: true,
                       resourceRequestCpu: '1000m',

@@ -62,11 +62,11 @@ objects:
               command:
               - echo
               - ok
-            failureThreshold: 3
-            initialDelaySeconds: 30
-            periodSeconds: 10
             successThreshold: 1
-            timeoutSeconds: 1
+            failureThreshold: 10
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 2
           name: ${SERVICE_NAME}
           ports:
           - containerPort: 8081
@@ -77,10 +77,11 @@ objects:
               path: /
               port: 8081
               scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 10
             successThreshold: 1
-            timeoutSeconds: 1
+            failureThreshold: 10
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 2
           resources:
             limits:
               memory: ${MAX_MEMORY}
