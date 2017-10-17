@@ -141,20 +141,20 @@ objects:
             - name: "${JENKINS_SERVICE_HOST}"
               image: " "
               readinessProbe:
-                timeoutSeconds: 1
-                initialDelaySeconds: 60
-                periodSeconds: 10
                 successThreshold: 1
                 failureThreshold: 20
+                timeoutSeconds: 1
+                initialDelaySeconds: 300
+                periodSeconds: 10
                 httpGet:
                   path: "/login"
                   port: 8080
               livenessProbe:
-                timeoutSeconds: 1
-                initialDelaySeconds: 60
-                periodSeconds: 10
                 successThreshold: 1
-                failureThreshold: 6
+                failureThreshold: 20
+                timeoutSeconds: 1
+                initialDelaySeconds: 300
+                periodSeconds: 10
                 httpGet:
                   path: "/login"
                   port: 8080

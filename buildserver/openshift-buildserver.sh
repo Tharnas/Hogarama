@@ -59,6 +59,13 @@ function create_pipelines() {
     -p "MAVEN_MIRROR_URL=http://hogarama-nexus:8081/repository/maven-public/"
 
   oc logout
+
+  echo \
+  " \
+  You need to update the following jenkins plugins: \
+  OpenShift-*
+  Kubernetes
+  "
 }
 
 function restore() {

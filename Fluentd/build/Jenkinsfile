@@ -1,5 +1,5 @@
 node {
   stage('Build') {
-    buildConfig(buildName: 'hogarama-fluentd-build', showBuildLogs: true);
+    openshiftBuild(buildConfig: 'hogarama-fluentd-build', showBuildLogs: true);
  }
 }

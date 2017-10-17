@@ -63,25 +63,25 @@ objects:
               - echo
               - ok
             successThreshold: 1
-            failureThreshold: 10
-            initialDelaySeconds: 60
+            failureThreshold: 20
+            initialDelaySeconds: 300
             periodSeconds: 10
-            timeoutSeconds: 2
+            timeoutSeconds: 5
           name: ${SERVICE_NAME}
           ports:
           - containerPort: 8081
             protocol: TCP
           readinessProbe:
-            failureThreshold: 3
+            failureThreshold: 10
             httpGet:
               path: /
               port: 8081
               scheme: HTTP
             successThreshold: 1
             failureThreshold: 20
-            initialDelaySeconds: 60
+            initialDelaySeconds: 300
             periodSeconds: 10
-            timeoutSeconds: 2
+            timeoutSeconds: 5
           resources:
             limits:
               memory: ${MAX_MEMORY}
