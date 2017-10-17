@@ -64,7 +64,7 @@ objects:
               - ok
             successThreshold: 1
             failureThreshold: 20
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 5
           name: ${SERVICE_NAME}
