@@ -8,7 +8,7 @@ LABEL com.redhat.component="hogarama-jenkins-slave-maven-rhel7-docker" \
      release="1" \
      io.k8s.display-name="Jenkins Slave Maven and Oracle Java" \
      io.k8s.description="The jenkins slave maven image has the maven tools on top of the jenkins slave base image." \
-     io.openshift.tags="openshift,jenkins,slave,maven"
+     io.openshift.tags="openshift,jenkins,slave,maven,jenkins-slave"
 
      # Build arguments
  ARG VERSION_MAVEN

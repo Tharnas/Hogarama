@@ -2,6 +2,15 @@ FROM registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7
 
 MAINTAINER Thomas Herzog <herzog.thomas81@gmail.com>
 
+LABEL com.redhat.component="jenkins-slave-oracle-jdk-8-rhel7" \
+     name="gdhet/jenkins-slave-oracle-jdk-8-rhel7" \
+     version="3.6" \
+     architecture="x86_64" \
+     release="1" \
+     io.k8s.display-name="Jenkins Slave Maven and Oracle Java" \
+     io.k8s.description="The jenkins slave maven image has the maven tools on top of the jenkins slave base image." \
+     io.openshift.tags="openshift,jenkins,slave,maven,jenkins-slave"
+
 # Arguments for java version
 ARG VERSION_JAVA_MAJOR
 ARG VERSION_JAVA_MINOR

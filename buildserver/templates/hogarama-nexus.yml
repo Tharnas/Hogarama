@@ -78,15 +78,17 @@ objects:
               port: 8081
               scheme: HTTP
             successThreshold: 1
-            failureThreshold: 10
+            failureThreshold: 20
             initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 2
           resources:
             limits:
               memory: ${MAX_MEMORY}
+              cpu: "1000m"
             requests:
               memory: 512Mi
+              cpu: "500m"
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /nexus-data

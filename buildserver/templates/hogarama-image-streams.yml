@@ -56,3 +56,17 @@ items:
           from:
             kind: "DockerImage"
             name: "gdhet/hogarama-jenkins-slave-oracle-rhel7-docker"
+
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: "hogarama-fluentd"
+      annotations:
+        openshift.io/display-name: "hogarama-fluentd"
+    spec:
+      tags:
+        - name: latest
+          annotations:
+            openshift.io/display-name: "hogarama-fluentd"
+            tags: "hogarama-fluentd"
+            version: "latest"

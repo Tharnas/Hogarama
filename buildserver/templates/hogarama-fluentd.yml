@@ -1,0 +1,35 @@
+kind: "List"
+apiVersion: "v1"
+parameters:
+  - name: "GIT_REPO_URL"
+    displayName: "The repository url to the source"
+
+  - name: "GIT_REPO_REF"
+    displayName: "The repository branch to build"
+
+  - name: "IMAGE_VERSION"
+    displayName: "The version of the resulting docker image"
+
+items:
+  - kind: "BuildConfig"
+    apiVersion: "v1"
+    name: "hogarama-fluentd-build"
+    metadata:
+      name: "hogarama-fluentd-build"
+    spec:
+      source:
+        type: "Git"
+        contextDir: "Fluentd"
+        git:
+          uri: "https://github.com/Gepardec/Hogarama.git"
+          ref: "OPENSHIFT_JENKINS_PIPELINE"
+      strategy:
+        type: "Docker"
+        dockerStrategy:
+          env:
+            - name: "BUILD_LOGLEVEL"
+              value: "5"
+      output:
+        to:
+          kind: "ImageStreamTag"
+          name: "hogarama-fluentd:latest"

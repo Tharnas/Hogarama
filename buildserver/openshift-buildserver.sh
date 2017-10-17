@@ -9,21 +9,36 @@ function clear() {
   oc logout
 }
 
-function create_pipeline_git() {
+function create_jenkins() {
   oc login --username ${USERNAME} --password ${PASSWORD}
   oc new-project ${PROJECT_ID}
-  #oc create -f ${SCRIPT_DIR}/templates/pvc.yaml
-  #oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml \
-  #  -p "JENKINS_SERVICE_HOST=hogarama-jenkins" \
-  #  -p "JNLP_SERVICE_NAME=hogarama-jenkins-jnlp"
+
+  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml \
+    -p "JENKINS_SERVICE_HOST=jenkins-static" \
+    -p "JNLP_SERVICE_NAME=jenkins-static-jnlp" \
+    -p "GIT_REPO_URL=https://github.com/Gepardec/Hogarama.git" \
+    -p "GIT_REPO_REF=OPENSHIFT_JENKINS_PIPELINE" \
+    -p "JENKINS_FILE=buildserver/Jenkinsfile" \
+    -p "MAVEN_MIRROR_URL=http://hogarama-nexus:8081/repository/maven-public/"
+
+  oc logout
+}
+
+function create_pipelines() {
+  oc login --username ${USERNAME} --password ${PASSWORD}
+  oc new-project ${PROJECT_ID}
 
   # Setup openshift platform
-  oc create namespace Gepardec
-  oc create -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml -n ${NAMESPACE}
+  #oc create namespace ${NAMESPACE}
+  #oc create -f ${SCRIPT_DIR}/templates/hogarama-jenkins.yml -n ${NAMESPACE}
+
+  # Create build configs
+  oc create -f templates/hogarama-image-streams.yml -n ${PROJECT_ID}
+  oc create -f templates/hogarama-fluentd.yml -n ${PROJECT_ID}
 
   # Create apps
   oc new-app -f ${SCRIPT_DIR}/templates/hogarama-nexus.yml \
-    -p "SERVICE_NAME=hogarama-nexus"
+    -p "SERVICE_NAME=nexus"
   oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline-git.yml \
     -p "APP_NAME=hogajama" \
     -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
@@ -35,6 +50,12 @@ function create_pipeline_git() {
     -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
     -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
     -p "JENKINS_FILE_PATH=mqtt-client-java/build/Jenkinsfile" \
+    -p "MAVEN_MIRROR_URL=http://hogarama-nexus:8081/repository/maven-public/"
+  oc new-app -f ${SCRIPT_DIR}/templates/hogarama-jenkins-pipeline-git.yml \
+    -p "APP_NAME=fluentd" \
+    -p "GIT_REPO=https://github.com/Gepardec/Hogarama.git" \
+    -p "GIT_REF=OPENSHIFT_JENKINS_PIPELINE" \
+    -p "JENKINS_FILE_PATH=Fluentd/build/Jenkinsfile" \
     -p "MAVEN_MIRROR_URL=http://hogarama-nexus:8081/repository/maven-public/"
 
   oc logout

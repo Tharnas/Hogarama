@@ -26,24 +26,22 @@ parameters:
 
   - name: "GIT_REPO_REF"
     displayName: "Hogarama branch"
-    value: "JENKINS_CHANGES"
-    required: true
-
-  - name: "KUBERNETES_MASTER"
-    displayName: "The url to the openshift instance. (E.g.: https://192.168.42.195:8443)"
-    value: "https://192.168.42.195:8443"
-    required: true
-
-  - name: "JENKINS_SLAVE_IMAGE_MAVEN"
-    displayName: "The docker tag for the maven slave image"
-    value: "gdhet/hogarama-jenkins-slave-maven-rhel7-docker:3.5.0-jdk-8u144b01"
+    value: "OPENSHIFT_JENKINS_PIPELINE"
     required: true
 
   - name: "JENKINS_FILE"
     displayName: "The Jenkinsfile for the build"
-    value: "buildserver/Jenkinsfile"
     required: true
 
+  - name: "MAVEN_MIRROR_URL"
+    displayName: "The url of the maven mirror"
+    required: true
+
+  - name: MAX_MEMORY
+    displayName: Max Memory
+    description: Max memory allocated to the Nexus pod
+    required: true
+    value: 2Gi
 objects:
   - kind: "ServiceAccount"
     apiVersion: "v1"
@@ -147,7 +145,7 @@ objects:
                 initialDelaySeconds: 60
                 periodSeconds: 10
                 successThreshold: 1
-                failureThreshold: 6
+                failureThreshold: 20
                 httpGet:
                   path: "/login"
                   port: 8080
@@ -179,10 +177,15 @@ objects:
                   value: "${JENKINS_FILE}"
                 - name: "GIT_SSL_NO_VERIFY"
                   value: "true"
+                - name: "MAVEN_MIRROR_URL"
+                  value: "${MAVEN_MIRROR_URL}"
               resources:
+                requests:
+                  memory: "1024Mi"
+                  cpu: "500m"
                 limits:
-                  memory: "4096Mi"
-                  cpu: "2000m"
+                  memory: "${MAX_MEMORY}"
+                  cpu: "1000m"
               volumeMounts:
                 - name: "${JENKINS_SERVICE_HOST}"
                   mountPath: "/var/lib/jenkins"
@@ -224,22 +227,6 @@ objects:
           protocol: "TCP"
           port: 80
           targetPort: 8080
-          nodePort: 0
-      selector:
-        name:  "${JENKINS_SERVICE_HOST}"
-      type: "ClusterIP"
-      sessionAffinity: "None"
-
-  - kind: "Service"
-    apiVersion: "v1"
-    metadata:
-      name: "${JNLP_SERVICE_NAME}"
-    spec:
-      ports:
-        - name: "agent"
-          protocol: "TCP"
-          port: 50000
-          targetPort: 50000
           nodePort: 0
       selector:
         name:  "${JENKINS_SERVICE_HOST}"
