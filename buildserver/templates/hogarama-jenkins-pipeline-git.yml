@@ -9,7 +9,7 @@ metadata:
   name: "hogarama-jenkins"
   annotations:
     openshift.io/display-name: "Jenkins (Hogarama)"
-    description: "Jenkins Service for building and testing the Hogarama project"
+    description: "Openshift pipeline template"
     iconClass: "icon-jenkins"
     tags: "instant-app,jenkins"
 
@@ -42,8 +42,8 @@ objects:
       annotations:
         pipeline.alpha.openshift.io/uses: '[{"name": "${APP_NAME}", "namespace": "", "kind": "DeploymentConfig"}]'
       labels:
-        name: "${APP_NAME}-jenkins-pipeline"
-      name: "${APP_NAME}-jenkins-pipeline"
+        name: "${APP_NAME}-pipeline"
+      name: "${APP_NAME}-pipeline"
     spec:
       source:
         type: "Git"

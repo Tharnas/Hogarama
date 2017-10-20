@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: jenkins-build
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "hogarama-build-configs"
+  annotations:
+    openshift.io/display-name: "Jenkins Build"
+    description: "Jenkins build configuration"
+    iconClass: "icon-jenkins"
+    tags: "instant-app,jenkins"
+
+parameters:
+  - name: "FLUENTD_GIT_REPO_URL"
+    displayName: "The repository url to Fluentd"
+
+  - name: "FLUENTD_GIT_REPO_REF"
+    displayName: "The Fluentd repository ref"
+
+  - name: "JENKINS_GIT_REPO_URL"
+    displayName: "The repository url to Jenkins"
+
+  - name: "JENKINS_GIT_REPO_REF"
+    displayName: "The Jenkins repository ref"
+
+objects:
+  - kind: "BuildConfig"
+    apiVersion: "v1"
+    metadata:
+      name: "hogarama-fluentd-build"
+      labels:
+        name: "hogarama-fluentd-build"
+    spec:
+      source:
+        type: "Git"
+        contextDir: "Fluentd"
+        git:
+          uri: "${FLUENTD_GIT_REPO_URL}"
+          ref: "${FLUENTD_GIT_REPO_REF}"
+      strategy:
+        type: "Docker"
+        dockerStrategy:
+          env:
+            - name: "BUILD_LOGLEVEL"
+              value: "5"
+      output:
+        to:
+          kind: "ImageStreamTag"
+          name: "hogarama-fluentd:${FLUENTD_GIT_REPO_REF}"
+
+  - kind: "BuildConfig"
+    apiVersion: "v1"
+    metadata:
+      name: "hogarama-jenkins-build"
+      labels:
+        name: "hogarama-jenkins-build"
+    spec:
+      source:
+        type: "Git"
+        git:
+          uri: "${JENKINS_GIT_REPO_URL}"
+          ref: "${JENKINS_GIT_REPO_REF}"
+        contextDir: "buildserver/s2i/jenkins-ci"
+      strategy:
+        type: "Source"
+        sourceStrategy:
+          from:
+            kind: "ImageStreamTag"
+            namespace: "openshift"
+            name: "jenkins:2"
+      output:
+        to:
+          kind: "ImageStreamTag"
+          name: "hogarama-jenkins:${JENKINS_GIT_REPO_REF}"
+      triggers:
+        - type: "ImageChange"
+          imageChange:
