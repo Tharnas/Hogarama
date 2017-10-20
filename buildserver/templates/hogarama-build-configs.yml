@@ -63,7 +63,7 @@ objects:
         git:
           uri: "${JENKINS_GIT_REPO_URL}"
           ref: "${JENKINS_GIT_REPO_REF}"
-        contextDir: "buildserver/s2i/jenkins-ci"
+        contextDir: "Jenkins/s2i/jenkins-ci"
       strategy:
         type: "Source"
         sourceStrategy:
