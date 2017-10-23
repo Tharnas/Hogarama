@@ -17,12 +17,12 @@ ARG VERSION_JAVA_MINOR
 ARG VERSION_JAVA_BUILD
 ARG JAVA_ORACLE_HASH
 
+# Remove openjdk
+RUN yum remove -y ava-1.8.0-openjdk-headless java-1.8.0-openjdk-headless.i686
+
 # Enviroment variables
 ENV JAVA_VERSION=${VERSION_JAVA_MAJOR}u${VERSION_JAVA_MINOR}-b${VERSION_JAVA_BUILD} \
     JAVA_HOME=/opt/oracle-jdk-${VERSION_JAVA_MAJOR}
-
-# Remove openjdk
-RUN yum remove -y ava-1.8.0-openjdk-headless java-1.8.0-openjdk-headless.i686
 
 # Make directories
 RUN mkdir -p ${JAVA_HOME}
@@ -34,6 +34,10 @@ RUN  curl -LH "Cookie: oraclelicense=accept-securebackup-cookie" \
 
 # Change permissions for java directory
 RUN chmod -R 0777 ${JAVA_HOME}
+
+# Remove old links from openjdk
+RUN rm -f /usr/bin/jarsigner \
+    && rm -f /usr/bin/java*
 
 # Create symbolic links to usr/bin
 RUN ln -s ${JAVA_HOME}/bin/jar /usr/bin/jar \
