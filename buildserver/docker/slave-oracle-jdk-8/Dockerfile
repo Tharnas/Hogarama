@@ -18,7 +18,7 @@ ARG VERSION_JAVA_BUILD
 ARG JAVA_ORACLE_HASH
 
 # Remove openjdk
-RUN yum remove -y ava-1.8.0-openjdk-headless java-1.8.0-openjdk-headless.i686
+RUN yum remove -y java-1.8.0-openjdk-headless java-1.8.0-openjdk-headless.i686
 
 # Enviroment variables
 ENV JAVA_VERSION=${VERSION_JAVA_MAJOR}u${VERSION_JAVA_MINOR}-b${VERSION_JAVA_BUILD} \
