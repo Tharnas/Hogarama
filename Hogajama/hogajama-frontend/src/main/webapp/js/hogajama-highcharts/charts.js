@@ -52,7 +52,7 @@ $(document).ready(function (e) {
             var times = [];
             var series = [];
             for(var i = 0; i < sensorData[0].length; i++){
-                times.push(sensorData[0][i]['time'].match(/T(\d\d:\d\d)/)[1]);
+                times.push(sensorData[0][i]['time'].match(/T(\d\d:\d\d:\d\d)/)[1]);
             }
 
             for(var i = 0; i < sensorData.length; i++){
@@ -93,7 +93,7 @@ $(document).ready(function (e) {
                 var newTimes = [];
                 var newSeries = [];
                 for(var i = 0; i < sensorData[0].length; i++){
-                    newTimes.push(sensorData[0][i]['time'].match(/T(\d\d:\d\d)/)[1]);
+                    newTimes.push(sensorData[0][i]['time'].match(/T(\d\d:\d\d:\d\d)/)[1]);
                 }
 
                 for(var i = 0; i < sensorData.length; i++){
@@ -140,17 +140,21 @@ $(document).ready(function (e) {
     var datum = sensorData[0][0]['time'].match(/\d\d\d\d-\d\d-\d\d/)[0].split("-");
     datum = datum[2] + "." + datum[1] + "." + datum[0];
 
+    $("#chart-subtitle").text("MESSWERTE AM " + datum);
+
     console.log("Create chart");
     var moistureChart = Highcharts.chart('moisture-chart', {
             chart: {
-                type: 'line'
+                type: 'line',
+//                height: '800',
+                height: '400px'
             },
             title: {
-                text: 'Feuchtigkeit Messwerte am ' + datum
+                text: null
             },
-            subtitle: {
-                text: 'Source: gepardec.com'
-            },
+        /*subtitle: {
+            text: 'Source: gepardec.com'
+        },*/
             xAxis: {
                 categories: times.reverse()
             },
@@ -184,6 +188,16 @@ $(document).ready(function (e) {
                 }
             },
             series: series
+            /*responsive: {
+                rules: [{
+                    condition: {
+                        maxHeight: 991,
+                        callback: function(){
+                        	this.setSize(undefined, 400);
+                        }
+                    }
+                }]
+            }*/
         });
 
     setInterval(function(){

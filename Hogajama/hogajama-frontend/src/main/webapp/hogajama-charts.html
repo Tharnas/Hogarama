@@ -5,18 +5,23 @@
 <meta name="viewport" content="width=device-width, maximum-scale=1">
 
 <title>Hogarama</title>
-<link rel="icon" href="favicon.png" type="image/png">
-<link rel="shortcut icon" href="favicon.ico" type="img/x-icon">
+<!--link rel="icon" href="favicon.png" type="image/png">
+<link rel="shortcut icon" href="favicon.ico" type="img/x-icon"-->
+<link rel="icon" href="img/gepardec-favicon.png">
+<link rel="shortcut icon" href="img/gepardec-favicon.png" type="img/x-icon">
 
-<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Montserrat:300,400,600,700' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,800italic,700italic,600italic,400italic,300italic,800,700,600' rel='stylesheet' type='text/css'>
+
 
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <link href="css/style.css" rel="stylesheet" type="text/css">
-<link href="css/font-awesome.css" rel="stylesheet" type="text/css">
+<!--<link href="css/font-awesome.css" rel="stylesheet" type="text/css">-->
 <link href="css/responsive.css" rel="stylesheet" type="text/css">
 <link href="css/animate.css" rel="stylesheet" type="text/css">
 <link href="css/highcharts.css" rel="stylesheet" type="text/css">
+<link href="css/hogajama-charts.css" rel="stylesheet" type="text/css">
+
 
 <!--[if IE]><style type="text/css">.pie {behavior:url(PIE.htc);}</style><![endif]-->
 
@@ -37,18 +42,24 @@
 
 <!-- TODO: This is a  workaround - highcharts plotband instruction does not set color properly -->
 <style>
+
+    /*body {
+        background: url(../img/hogajama-charts-bg-trans-1.jpg) no-repeat left top;
+    }*/
+
     .highcharts-plot-bands-0 > :nth-child(1) {
         fill: #ff0000;
+        fill-opacity: 0.3;
     }
     .highcharts-plot-bands-0 > :nth-child(2) {
         fill: #008000;
+        fill-opacity: 0.3;
     }
     .highcharts-plot-bands-0 > :nth-child(3) {
         fill: #15a9ff;
-    }
-    .highcharts-plot-bands-0 {
         fill-opacity: 0.3;
     }
+
 </style>
 
 </head>
@@ -80,19 +91,30 @@
             <li><a href="/#team">Team</a></li>
             <li><a href="/#contact">Contact</a></li>
         </ul>
-        <a class="res-nav_click" href="#"><i class="fa-bars"></i></a>
+        <a class="res-nav_click" href="#"><i class="fa-bars"></i>&#9776;</a>
     </div>
 </nav>
 
-<div class="container-fluid" style="margin-top: 10px; text-align: center;">
-  <div class="row">
-    <div class="col-md-4"><b>Openshift Stage:</b> <span id="openshift-stage"></span></div>
-    <div class="col-md-4"><b>Openshift Pod-ID:</b> <span id="openshift-pod-id"></span></div>
-    <div class="col-md-4"><div id="qrcode"></div></div>
-  </div>
-</div>
+<section class="main-section charts" id="team" 
+        ><!--"main-section charts"-start-->
 
-<section class="main-section charts" id="team" style="padding: 50px 10px 100px;"><!--"main-section charts"-start-->
+    <div class="container-fluid charts-info" style="margin-top: -40px; text-align: center; margin-bottom: 20px;">
+        <div class="row">
+          <div class="col-md-4" style="text-align: left; padding: 25px; font-size: 1.5em;">
+              <a href="javascript:;" id="open-qrcode">Show QR Code</a><br />
+              <b>Openshift Stage:</b> <span id="openshift-stage"></span><br />
+              <b>Openshift Pod-ID:</b> <span id="openshift-pod-id"></span><br />
+              <b>URL:</b> <span id="tinyurl"></span>
+          </div>
+          <div class="col-md-4">
+              <h1 id="chart-title" style="font-weight: bold; margin-top: 45px;">FEUCHTIGKEIT</h1>
+              <h3 id="chart-subtitle" style="font-weight: bold; color: #3c3c3c;"></h3>
+          </div>
+          <div class="col-md-4">
+              <img class="hide-on-mobile" src="img/logo-hogarama-gepardec.png" width="250px" height="141px"/>
+          </div>
+        </div>
+      </div>
 
 	<!--div id="uptime-chart" style="width:100%; height:400px;"></div>
 
@@ -111,7 +133,7 @@
         <div class="sk-circle11 sk-child"></div>
         <div class="sk-circle12 sk-child"></div>
     </div>
-    <div id="moisture-chart" style="width:100%; height:400px;" class="hidden"></div>
+    <div id="moisture-chart" style="width:100%; height:75%; min-height: 400px;" class="hidden"></div>
 
 </section><!--"main-section charts"-end-->
 
@@ -128,6 +150,7 @@
     -->
 </footer>
 
+<div id="qrcode" style="display:none"></div>
 
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -227,26 +250,7 @@ $(window).load(function(){
 
 <script type="text/javascript" src="js/hogajama-highcharts/charts.js"></script>
 <script type="text/javascript" src="js/hogajama-highcharts/load-openshift-env-vars.js"></script>
-
-<script type="text/javascript">
-    var qrcode = new QRCode($("#qrcode").get(0), {
-        width : 200,
-        height : 200
-    });
-
-    function makeCode () {	
-        
-        var url = window.location.href;
-        //document.write(url);
-        
-        if(url!= null && url.length>0) {
-            qrcode.makeCode(url);
-        }			
-    }
-
-    makeCode();
-
-</script>
+<script type="text/javascript" src="js/hogajama-highcharts/load-qr-code.js"></script>
 
 </body>
 </html>

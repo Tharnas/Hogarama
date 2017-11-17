@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Gepardec/Hogarama.svg?branch=master)](https://travis-ci.org/Gepardec/Hogarama) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=com.gepardec.hogajama:hogajama)](https://sonarcloud.io/dashboard/index/com.gepardec.hogajama:hogajama)
+
 # Hogarama
 Home and Garden Automation
 

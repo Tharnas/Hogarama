@@ -4,6 +4,10 @@ MAINTAINER Matthias Kapferer <matthias.kapferer@gepardec.com>
 
 LABEL Description="Fluentd docker image" Vendor="Gepardec IT Services GmbH" Version="1.0"
 
+# Set Timezone
+ENV TZ=Europe/Vienna
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Do not split this into multiple RUN! 
 # Docker creates a layer for every RUN-Statement 
 # therefore an 'apt-get purge' has no effect 
